@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block title %}AppBundle:Agenda:add{% endblock %}
+
+{% block body %}
+<div class="container mt-5 text-center">
+    
+    <h1>Modifica Contatto</h1>
+    
+    <h2>Nuovo Contatto</h2>
+    <div class="container my-5 text-center w-25">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-success my-3">Salva</button>
+        {{ form_end(form) }}
+    </div>
+    <a href="{{ path('homepage') }}" class="btn btn-primary">Torna alla HOME</a>
+    
+</div>
+{% endblock %}

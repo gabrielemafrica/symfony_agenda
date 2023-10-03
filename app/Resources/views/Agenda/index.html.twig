@@ -1,0 +1,51 @@
+{% extends "base.html.twig" %}
+
+{% block title %}AppBundle:Agenda:index{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 text-center">
+
+        <h1>La tua Agenda</h1>
+
+        <a href="{{ path('add_agenda') }}" class="btn btn-primary my-4">Aggiungi Contatto</a>
+
+        {% if entries|length > 0 %}
+            <div class='container'>
+                <table class="table table-hover text-center">
+                    <thead>
+                        <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Cognome</th>
+                        <th scope="col">Numero di Telefono</th>
+                        <th scope="col">AZIONI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                            <tr>
+                            <td>{{ entry.id }}</td>
+                            <td>{{ entry.name }}</td>
+                            <td>{{ entry.surname }}</td>
+                            <td>{{ entry.phoneNumber }}</td>
+                            <td class="d-flex justify-content-center gap-3">
+                                <a href="{{ path('edit_agenda', {'id': entry.id}) }}" class="btn btn-warning">Modifica</a>
+
+                                <form action="{{ path('delete_agenda') }}" method="post"
+                                onsubmit="return confirm('Sei sicuro di voler eliminare questo contatto?');"
+                                >
+                                    <input type="hidden" name="id" value="{{ entry.id }}">
+                                    <button type="submit" class="btn btn-danger">Elimina</button>
+                                </form>
+
+                            </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <h3>La tua agenda è vuota.</h3>
+        {% endif %}
+    </div>
+{% endblock %}
