@@ -3,11 +3,26 @@
 {% block title %}AppBundle:Agenda:index{% endblock %}
 
 {% block body %}
+
+    {% include 'components/addModalEntityForm.html.twig' %}
+    {% include 'components/addModal.html.twig' %}
+
+
     <div class="container mt-5 text-center">
 
         <h1>La tua Agenda</h1>
 
         <a href="{{ path('add_agenda') }}" class="btn btn-primary my-4">Aggiungi Contatto</a>
+        
+        <button type="button" id="buttonAdd" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Aggiungi contatto con normal-form
+        </button>
+
+        <div>
+            <button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Aggiungi contatto con entity-form
+            </button>
+        </div>
 
         {% if entries|length > 0 %}
             <div class='container'>
@@ -49,4 +64,10 @@
             <h3>La tua agenda è vuota.</h3>
         {% endif %}
     </div>
+
+    <script>
+
+
+
+</script>
 {% endblock %}

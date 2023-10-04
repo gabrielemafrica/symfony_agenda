@@ -1,0 +1,22 @@
+    {# modale #}
+    <div id="modal_nominativiEntityForm" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nuovo contatto con Modal</h5>
+                    
+                    {# Sviluppare il form con gli input text nome, cognome, telefono immagine#}
+
+                    <div class="modal-body">        
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success my-3">Salva</button>
+                    {{ form_end(form) }}
+                    <button type="button" id="buttonCloseEntityForm" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>

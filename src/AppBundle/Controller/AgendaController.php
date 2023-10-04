@@ -7,6 +7,7 @@ use AppBundle\Form\AgendaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AgendaController extends Controller
 {
@@ -18,8 +19,41 @@ class AgendaController extends Controller
 
         $entries = $this->getDoctrine()->getRepository(Agenda::class)->findAll();
 
+        // form
+        $agenda = new Agenda();
+        $form = $this->createForm(AgendaType::class, $agenda);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // gestione immagine
+            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
+            $fotoFile = $form['fotoFilename']->getData();
+            
+            if ($fotoFile) {
+                $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+
+                $fotoFile->move(
+                    $this->getParameter('foto_directory'),
+                    $newFilename
+                );
+
+                $agenda->setFotoFilename($newFilename);
+            }
+
+            // gestisco maiuscole
+            $agenda->setName(ucfirst(strtolower($agenda->getName())));
+            $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($agenda);
+            $em->flush();
+
+            return $this->redirectToRoute('homepage');
+        }
+
         return $this->render('Agenda/index.html.twig', [
-            // 'form' => $form->createView(),
+            'form' => $form->createView(),
             'entries' => $entries,
         ]);
     }
@@ -64,16 +98,6 @@ class AgendaController extends Controller
                         $this->getParameter('foto_directory'),
                         $newFilename
                     );
-        
-                    // try {
-                    //     $fotoFile->move(
-                    //         $this->getParameter('foto_directory'),
-                    //         $newFilename
-                    //     );
-                    // }
-                    // catch (FileException $e) {
-                    //     // da scrivere eccezione se qualcosa non va nell'upload
-                    // }
 
                     $agenda->setFotoFilename($newFilename);
                 }
@@ -92,6 +116,50 @@ class AgendaController extends Controller
                 'form' => $form->createView(),
             ]);
         }
+    /**
+     * @Route("/add-modal", name="add_agenda_modal", methods={"POST"})
+     */
+    public function createAction(Request $request)
+    {
+
+        $agenda = new Agenda();
+        
+        $name = $request->request->get('name');
+        $surname = $request->request->get('surname');
+        $phone_number = $request->request->get('phone_number');
+        $address = $request->request->get('address');
+        $sex = $request->request->get('sex');
+
+        $agenda->setName($name);
+        $agenda->setSurname($surname);
+        $agenda->setPhoneNumber($phone_number);
+        $agenda->setAddress($address);
+        $agenda->setSex($sex);
+
+        // Gestione immagine
+        /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
+        $fotoFile = $request->files->get('fotoFilename');
+        
+        if ($fotoFile) {
+            $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+
+            $fotoFile->move(
+                $this->getParameter('foto_directory'),
+                $newFilename
+            );
+
+            $agenda->setFotoFilename($newFilename);
+        }
+        
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($agenda);
+        $entityManager->flush();
+
+        // return $this->redirectToRoute('homepage');
+        return new JsonResponse(['status' => 'success']);
+    }
+
     /**
      * @Route("/edit", name="edit_agenda")
      */
