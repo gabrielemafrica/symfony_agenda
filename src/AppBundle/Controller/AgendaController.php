@@ -25,6 +25,21 @@ class AgendaController extends Controller
     }
 
     /**
+     * @Route("/show", name="show_agenda")
+     */
+    public function showAction(Request $request)
+    {
+        $id = $request->query->get('id');
+
+        $em = $this->getDoctrine()->getManager();
+        $entries = $em->getRepository(Agenda::class)->find($id);
+
+        return $this->render('Agenda/show.html.twig', [
+            'entries' => $entries,
+        ]);
+    }
+
+    /**
      * @Route("/add", name="add_agenda")
      */
     public function addAction(Request $request)
@@ -34,6 +49,34 @@ class AgendaController extends Controller
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
+
+                // gestione immagine
+                /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
+                $fotoFile = $form['fotoFilename']->getData();
+                
+                if ($fotoFile) {
+                    $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    // $safeFilename = hash('sha256', $originalFilename);
+                    $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+
+
+                    $fotoFile->move(
+                        $this->getParameter('foto_directory'),
+                        $newFilename
+                    );
+        
+                    // try {
+                    //     $fotoFile->move(
+                    //         $this->getParameter('foto_directory'),
+                    //         $newFilename
+                    //     );
+                    // }
+                    // catch (FileException $e) {
+                    //     // da scrivere eccezione se qualcosa non va nell'upload
+                    // }
+
+                    $agenda->setFotoFilename($newFilename);
+                }
 
                 $agenda->setName(ucfirst(strtolower($agenda->getName())));
                 $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));
@@ -57,12 +100,40 @@ class AgendaController extends Controller
             $id = $request->query->get('id');
 
             $em = $this->getDoctrine()->getManager();
+            // dump($this->getDoctrine()->getManager());
+            // die();
             $agenda = $em->getRepository(Agenda::class)->find($id);
 
             $form = $this->createForm(AgendaType::class, $agenda);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+
+                // gestione immagine
+                /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
+                $fotoFile = $form['fotoFilename']->getData();
+
+                if ($fotoFile) {
+                    $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    // $safeFilename = hash('sha256', $originalFilename);
+                    $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+
+                    $fotoFile->move(
+                        $this->getParameter('foto_directory'),
+                        $newFilename
+                    );
+        
+                    // try {
+                    //     $fotoFile->move(
+                    //         $this->getParameter('foto_directory'),
+                    //         $newFilename
+                    //     );
+                    // } catch (FileException $e) {
+                    //     // ... gestisci eccezione se qualcosa va storto durante l'upload
+                    // }
+        
+                    $agenda->setFotoFilename($newFilename);
+                }
 
                 $agenda->setName(ucfirst(strtolower($agenda->getName())));
                 $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));

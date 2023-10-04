@@ -194,28 +194,4 @@ class Agenda
     {
         return $this->fotoFilename;
     }
-
-    /**
-     * Set address
-     *
-     * @param string $address
-     *
-     * @return Agenda
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * Get address
-     *
-     * @return string
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
 }
