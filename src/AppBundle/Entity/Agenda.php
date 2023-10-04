@@ -42,6 +42,13 @@ class Agenda
      */
     private $phoneNumber;
 
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="foto_filename", type="string", length=255, nullable=true)
+     */
+    private $fotoFilename;
+
 
     /**
      * Get id
@@ -123,6 +130,30 @@ class Agenda
     public function getPhoneNumber()
     {
         return $this->phoneNumber;
+    }
+
+    /**
+     * Set fotoFilename
+     *
+     * @param string|null $fotoFilename
+     *
+     * @return Agenda
+     */
+    public function setFotoFilename(?string $fotoFilename): self
+    {
+        $this->fotoFilename = $fotoFilename;
+
+        return $this;
+    }
+
+    /**
+     * Get fotoFilename
+     *
+     * @return string|null
+     */
+    public function getFotoFilename(): ?string
+    {
+        return $this->fotoFilename;
     }
 }
 
