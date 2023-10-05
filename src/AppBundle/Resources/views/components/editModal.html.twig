@@ -9,7 +9,7 @@
                 <div class="modal-body">        
                     <div class='container'>
                         <div class="card mx-auto my-5" style="width: 18rem;">
-                            <form id="agendaForm" enctype="multipart/form-data" method="post">
+                            <form id="agendaForm" enctype="multipart/form-data" method="post" action="{{ path('edit_agenda_modal') }}">
 
                                 <img id="imageModalEdit" src="" class="card-img-top" alt="Foto Contatto">
                                 <div class="form-group">
@@ -19,8 +19,7 @@
 
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label for="id">id:</label>
-                                        <input type="text" class="form-control" id="idModalEdit" name="id" readonly>
+                                        <input type="hidden" class="form-control" id="idModalEdit" name="id" readonly>
                                         <label for="name">Nome:</label>
                                         <input type="text" class="form-control" id="nameModalEdit" name="name">
                                     </div>
@@ -58,9 +57,9 @@
                                     <a href="#" class="card-link">Another link</a>
                                 </div>
 
-                                <a href="{{ path('edit_agenda') }}" class="btn btn-warning" id="buttonSaveEdit">
-                                    <button type="submit" class="btn btn-danger">Modifica</button>
-                                </a>
+                                
+                                <button type="submit" class="btn btn-warning">Modifica</button>
+                              
                             </form>
                         </div>
 
@@ -74,7 +73,7 @@
                     <form action="{{ path('delete_agenda') }}" method="post"
                     onsubmit="return confirm('Sei sicuro di voler eliminare questo contatto?');"
                     >
-                        <input type="hidden" name="id" value="">
+                        <input type="hidden" name="id" id="idModalDelete" value="" readonly>
                         <button type="submit" class="btn btn-danger">Elimina</button>
                     </form>
 

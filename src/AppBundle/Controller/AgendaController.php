@@ -191,15 +191,6 @@ class AgendaController extends Controller
                         $newFilename
                     );
         
-                    // try {
-                    //     $fotoFile->move(
-                    //         $this->getParameter('foto_directory'),
-                    //         $newFilename
-                    //     );
-                    // } catch (FileException $e) {
-                    //     // ... gestisci eccezione se qualcosa va storto durante l'upload
-                    // }
-        
                     $agenda->setFotoFilename($newFilename);
                 }
 
@@ -216,6 +207,54 @@ class AgendaController extends Controller
             ]);
 
         }
+    /**
+     * @Route("/edit-modal", name="edit_agenda_modal")
+     */
+    public function editActionModal(Request $request)
+        {
+            //take id
+            $id = $request->request->get('id');
+            //search in database
+            $em = $this->getDoctrine()->getManager();
+            $agenda = $em->getRepository(Agenda::class)->find($id);
+            
+            //take data from request and put in entity
+            $name = $request->request->get('name');
+            $surname = $request->request->get('surname');
+            $phone_number = $request->request->get('phone_number');
+            $address = $request->request->get('address');
+            $email = $request->request->get('email');
+ 
+            $agenda->setName($name);
+            $agenda->setSurname($surname);
+            $agenda->setPhoneNumber($phone_number);
+            $agenda->setAddress($address);
+ 
+            // Gestione immagine
+            // if are new image then save
+            if ($request->files->get('fotoFilename')) {
+                /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
+                $fotoFile = $request->files->get('fotoFilename');
+
+                $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+
+                $fotoFile->move(
+                    $this->getParameter('foto_directory'),
+                    $newFilename
+                );
+
+                $agenda->setFotoFilename($newFilename);
+            }
+            //update to db
+            $agenda->setName(ucfirst(strtolower($agenda->getName())));
+            $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));
+
+            $em->flush();
+
+            return $this->redirectToRoute('homepage');
+
+        }
 
     /**
      * @Route("/delete", name="delete_agenda", methods={"POST"})
@@ -223,6 +262,8 @@ class AgendaController extends Controller
         public function deleteAction(Request $request)
         {
             $id = $request->request->get('id'); // Nota: ora usiamo ->request invece di ->query
+            // dump($id);
+            // die();
             error_log("ID: " . $id);
             $em = $this->getDoctrine()->getManager();
             $agenda = $em->getRepository(Agenda::class)->find($id);

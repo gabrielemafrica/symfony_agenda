@@ -12,11 +12,13 @@ $(document).ready(function() {
         const address = $(this).data('address');
         const sex = $(this).data('sex');
         const fotoFilename = $(this).data('foto');
-        console.log(name, surname, phoneNumber, address, sex, fotoFilename);
+        // console.log(name, surname, phoneNumber, address, sex, fotoFilename);
+        console.log(id);
 
         // Popolo la modale con i dati
         $('#imageModalEdit').attr('src', fotoFilename);
         $('#idModalEdit').val(id);
+        $('#idModalDelete').val(id);
         $('#nameModalEdit').val(name);
         $('#surnameModalEdit').val(surname);
         $('#phone_numberModalEdit').val(phoneNumber);
@@ -25,6 +27,7 @@ $(document).ready(function() {
         
         // Mostra la modale
         $("#modal_edit").modal('show');
+        $("#modal_show").modal('hide');
 
     });
 

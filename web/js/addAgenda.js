@@ -4,8 +4,6 @@ $(document).ready(function() {
 
     $('#buttonAddWithEntityForm').on('click', function(){
         
-        //resettare tutti i campi
-        
         $("#modal_nominativiEntityForm").modal('show');
 
     });
@@ -19,14 +17,14 @@ $(document).ready(function() {
 
     $('#buttonAdd').on('click', function(){
         
-        //resettare tutti i campi
         
         $("#modal_nominativi").modal('show');
+        $('#agendaForm')[0].reset();
 
     });
 
     $('#buttonClose').on('click', function(){
-
+       
         $("#modal_nominativi").modal('hide');
     });
     
