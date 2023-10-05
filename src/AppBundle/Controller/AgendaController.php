@@ -52,7 +52,7 @@ class AgendaController extends Controller
             return $this->redirectToRoute('homepage');
         }
 
-        return $this->render('Agenda/index.html.twig', [
+        return $this->render('@AppBundle/Agenda/index.html.twig', [
             'form' => $form->createView(),
             'entries' => $entries,
         ]);
@@ -68,7 +68,7 @@ class AgendaController extends Controller
         $em = $this->getDoctrine()->getManager();
         $entries = $em->getRepository(Agenda::class)->find($id);
 
-        return $this->render('Agenda/show.html.twig', [
+        return $this->render('@AppBundle/Agenda/show.html.twig', [
             'entries' => $entries,
         ]);
     }
@@ -112,7 +112,7 @@ class AgendaController extends Controller
                 return $this->redirectToRoute('homepage');
             }
 
-            return $this->render('Agenda/add.html.twig', [
+            return $this->render('@AppBundle/Agenda/add.html.twig', [
                 'form' => $form->createView(),
             ]);
         }
@@ -210,7 +210,7 @@ class AgendaController extends Controller
 
                 return $this->redirectToRoute('homepage');
             }
-            return $this->render('Agenda/edit.html.twig', [
+            return $this->render('@AppBundle/Agenda/edit.html.twig', [
                 'agenda' => $agenda,
                 'form' => $form->createView(),
             ]);

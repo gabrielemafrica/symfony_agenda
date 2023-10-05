@@ -1,0 +1,85 @@
+    <!-- {# modale #} -->
+    <div id="modal_edit" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifica Contatto</h5>
+                </div>
+
+                <div class="modal-body">        
+                    <div class='container'>
+                        <div class="card mx-auto my-5" style="width: 18rem;">
+                            <form id="agendaForm" enctype="multipart/form-data" method="post">
+
+                                <img id="imageModalEdit" src="" class="card-img-top" alt="Foto Contatto">
+                                <div class="form-group">
+                                    <label for="fotoFilename">Foto:</label>
+                                    <input type="file" class="form-control" id="fotoFilename" name="fotoFilename">
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="id">id:</label>
+                                        <input type="text" class="form-control" id="idModalEdit" name="id" readonly>
+                                        <label for="name">Nome:</label>
+                                        <input type="text" class="form-control" id="nameModalEdit" name="name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="surname">Cognome:</label>
+                                        <input type="text" class="form-control" id="surnameModalEdit" name="surname">
+                                    </div>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="phone_number">Telefono:</label>
+                                            <input type="text" class="form-control" id="phone_numberModalEdit" name="phone_number">
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="address">Indirizzo:</label>
+                                            <input type="text" class="form-control" id="addressModalEdit" name="address">
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <label for="sex">Sesso:</label>
+                                            <select class="form-control" id="sexModalEdit" name="sex">
+                                                <option value="">Seleziona...</option>
+                                                <option value="Maschio">Maschio</option>
+                                                <option value="Femmina">Femmina</option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="card-body">
+                                    <a href="#" class="card-link">Card link</a>
+                                    <a href="#" class="card-link">Another link</a>
+                                </div>
+
+                                <a href="{{ path('edit_agenda') }}" class="btn btn-warning" id="buttonSaveEdit">
+                                    <button type="submit" class="btn btn-danger">Modifica</button>
+                                </a>
+                            </form>
+                        </div>
+
+                    
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+
+            
+                    <form action="{{ path('delete_agenda') }}" method="post"
+                    onsubmit="return confirm('Sei sicuro di voler eliminare questo contatto?');"
+                    >
+                        <input type="hidden" name="id" value="">
+                        <button type="submit" class="btn btn-danger">Elimina</button>
+                    </form>
+
+                    <button type="button" id="buttonCloseEdit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
