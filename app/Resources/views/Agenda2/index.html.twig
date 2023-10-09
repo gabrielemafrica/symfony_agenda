@@ -3,11 +3,27 @@
 {% block title %}AppBundle:Agenda:index{% endblock %}
 
 {% block body %}
+
+    {% include 'components/addModalEntityForm.html.twig' %}
+    {% include 'components/addModal.html.twig' %}
+    {% include 'components/showModal.html.twig' %}
+
+
     <div class="container mt-5 text-center">
 
         <h1>La tua Agenda</h1>
 
         <a href="{{ path('add_agenda') }}" class="btn btn-primary my-4">Aggiungi Contatto</a>
+
+        <button type="button" id="buttonAdd" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Aggiungi contatto con normal-form
+        </button>
+
+        <div>
+            <button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Aggiungi contatto con entity-form
+            </button>
+        </div>
 
         {% if entries|length > 0 %}
             <div class='container'>
@@ -30,6 +46,19 @@
                             <td>{{ entry.phoneNumber }}</td>
                             <td class="d-flex justify-content-center gap-3">
                                 <a href="{{ path('show_agenda', {'id': entry.id}) }}" class="btn btn-info">Show</a>
+                                <div>
+                                    <button type="button" class="buttonShow btn btn-info" data-toggle="modal"
+                                        data-id="{{ entry.id }}"
+                                        data-name="{{ entry.name }}"
+                                        data-surname="{{ entry.surname }}"
+                                        data-phone="{{ entry.phoneNumber }}"
+                                        data-address="{{ entry.address }}"
+                                        data-sex="{{ entry.sex }}"
+                                        data-foto="{{ asset('uploads/fotos/' ~ entry.fotoFilename) }}"
+                                    >
+                                        Show Modal
+                                    </button>
+                                </div>
                                 <a href="{{ path('edit_agenda', {'id': entry.id}) }}" class="btn btn-warning">Modifica</a>
 
                                 <form action="{{ path('delete_agenda') }}" method="post"
@@ -49,4 +78,10 @@
             <h3>La tua agenda è vuota.</h3>
         {% endif %}
     </div>
+
+    <script>
+
+
+
+</script>
 {% endblock %}

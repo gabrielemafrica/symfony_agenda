@@ -1,0 +1,48 @@
+    <!-- {# modale #} -->
+    <div id="modal_show" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dettagli Contatto</h5>
+                </div>
+
+                <div class="modal-body">        
+                    <div class='container'>
+                        <div class="card mx-auto my-5" style="width: 18rem;">
+                            <img id="modalImage" src="" class="card-img-top" alt="Foto Contatto">
+                            
+                            <div class="card-body">
+                                <h5 id="modalName" class="card-title"></h5>
+                                <p class="card-text">Dettagli del contatto selezionato.</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li id="modalPhone" class="list-group-item"></li>
+                                <li id="modalAddress" class="list-group-item"></li>
+                                <li id="modalSex" class="list-group-item"></li>
+                            </ul>
+                            <div class="card-body">
+                                <a href="#" class="card-link">Card link</a>
+                                <a href="#" class="card-link">Another link</a>
+                            </div>
+                        </div>
+
+                    
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+
+                    <a href="{{ path('edit_agenda') }}" id="modalEdit" class="btn btn-warning">Modifica</a>
+            
+                    <form action="{{ path('delete_agenda') }}" method="post"
+                    onsubmit="return confirm('Sei sicuro di voler eliminare questo contatto?');"
+                    >
+                        <input type="hidden" name="id" value="">
+                        <button type="submit" class="btn btn-danger">Elimina</button>
+                    </form>
+
+                    <button type="button" id="buttonCloseShow" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>

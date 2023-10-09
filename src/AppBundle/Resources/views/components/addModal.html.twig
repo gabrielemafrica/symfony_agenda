@@ -1,0 +1,47 @@
+<!-- modale -->
+<div id="modal_nominativi" class="modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Nuovo Contatto</h5>
+			</div>
+			<div class="modal-body">
+				<form id="agendaForm" enctype="multipart/form-data">
+					<div class="form-group">
+						<input type="hidden" class="form-control" id="idModalEdit" name="id" value="">
+						<label for="name">Nome:</label>
+						<input type="text" class="form-control" id="name" name="name">
+					</div>
+					<div class="form-group">
+						<label for="surname">Cognome:</label>
+						<input type="text" class="form-control" id="surname" name="surname">
+					</div>
+					<div class="form-group">
+						<label for="phone_number">Telefono:</label>
+						<input type="text" class="form-control" id="phone_number" name="phone_number">
+					</div>
+					<div class="form-group">
+						<label for="address">Indirizzo:</label>
+						<input type="text" class="form-control" id="address" name="address">
+					</div>
+					<div class="form-group">
+						<label for="sex">Sesso:</label>
+						<select class="form-control" id="sex" name="sex">
+							<option value="">Seleziona...</option>
+							<option value="Maschio">Maschio</option>
+							<option value="Femmina">Femmina</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="fotoFilename">Foto:</label>
+						<input type="file" class="form-control" id="fotoFilename" name="fotoFilename">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="buttonSave" class="btn btn-primary">Save changes</button>
+				<button type="button" id="buttonClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
