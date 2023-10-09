@@ -46,25 +46,24 @@
 				</form>
 
 				{# chiamate #}
-				<form enctype="multipart/form-data" id="chiamate_form" action="{{ path('save_chiamate') }}" method="post">
-					<table class="table" id="chiamateTable">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Data</th>
-								<th>Ora</th>
-								<th>Note</th>
-								<th></th>
-								<!-- per il bottone rimuovi -->
-							</tr>
-						</thead>
-						<tbody>
-							<!-- Le righe saranno generate dinamicamente con JavaScript -->
-						</tbody>
-					</table>
 
-					<button id="addChiamata" class="btn btn-primary">Aggiungi Chiamata</button>
-				</form>
+				<table class="table" id="chiamateTable">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Data</th>
+							<th>Ora</th>
+							<th>Note</th>
+							<th></th>
+							<!-- per il bottone rimuovi -->
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Le righe saranno generate dinamicamente con JavaScript -->
+					</tbody>
+				</table>
+
+				<button id="addChiamata" class="btn btn-primary">Aggiungi Chiamata</button>
 
 			</div>
 			<div class="modal-footer">
