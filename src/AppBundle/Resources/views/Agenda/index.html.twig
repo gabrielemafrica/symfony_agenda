@@ -4,10 +4,8 @@
 
 {% block body %}
 
-    {% include '@AppBundle/Components/addModalEntityForm.html.twig' %}
-    {% include '@AppBundle/components/addModal.html.twig' %}
     {% include '@AppBundle/components/showModal.html.twig' %}
-    {% include '@AppBundle/components/editModal.html.twig' %}
+    {% include '@AppBundle/components/addEditModal.html.twig' %}
 
 
     <div class="container mt-5 text-center">
@@ -17,15 +15,15 @@
         <!-- {# <a href="{{ path('add_agenda') }}" class="btn btn-primary my-4">Aggiungi Contatto</a> #} -->
         <div class="my-3">
             <button type="button" id="buttonAdd" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                Aggiungi contatto con normal-form
+                Aggiungi contatto
             </button>
         </div>
 
-        <div>
+        <!-- <div>
             <button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                 Aggiungi contatto con entity-form
             </button>
-        </div>
+        </div> -->
 
         {% if entries|length > 0 %}
             <div class='container'>
@@ -51,12 +49,6 @@
                                 <div>
                                     <button type="button" class="buttonShow btn btn-info" data-toggle="modal"
                                         data-id="{{ entry.id }}"
-                                        data-name="{{ entry.name }}"
-                                        data-surname="{{ entry.surname }}"
-                                        data-phone="{{ entry.phoneNumber }}"
-                                        data-address="{{ entry.address }}"
-                                        data-sex="{{ entry.sex }}"
-                                        data-foto="{{ asset('uploads/fotos/' ~ entry.fotoFilename) }}"
                                     >
                                         Show Modal
                                     </button>
@@ -65,22 +57,19 @@
                                 <div>
                                     <button type="button" class="buttonEdit btn btn-warning" data-toggle="modal"
                                         data-id="{{ entry.id }}"
-                                        data-name="{{ entry.name }}"
-                                        data-surname="{{ entry.surname }}"
-                                        data-phone="{{ entry.phoneNumber }}"
-                                        data-address="{{ entry.address }}"
-                                        data-sex="{{ entry.sex }}"
-                                        data-foto="{{ asset('uploads/fotos/' ~ entry.fotoFilename) }}"
                                     >
                                         Edit Modal
                                     </button>
                                 </div>
-                                <form action="{{ path('delete_agenda') }}" method="post"
+                                <div>
+                                    <a href="{{ path('delete_agenda', {'id': entry.id}) }}" class="btn btn-danger"  onclick="return confirm('Sei sicuro di voler eliminare questo contatto?');">Delete</a>
+                                </div>
+                                <!-- <form action="{{ path('delete_agenda') }}" method="post"
                                 onsubmit="return confirm('Sei sicuro di voler eliminare questo contatto?');"
                                 >
                                     <input type="hidden" name="id" value="{{ entry.id }}">
                                     <button type="submit" class="btn btn-danger">Elimina</button>
-                                </form>
+                                </form> -->
 
                             </td>
                             </tr>

@@ -63,135 +63,22 @@ class Agenda
      */
     private $fotoFilename;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="deleted", type="boolean", options={"default":false})
+     */
+    private $deleted = false;
 
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Chiamate", mappedBy="agenda")
      */
-    public function getId()
-    {
-        return $this->id;
+    private $chiamate;
+
+    public function __construct() {
+        $this->chiamate = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Agenda
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
 
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set surname
-     *
-     * @param string $surname
-     *
-     * @return Agenda
-     */
-    public function setSurname($surname)
-    {
-        $this->surname = $surname;
-
-        return $this;
-    }
-
-    /**
-     * Get surname
-     *
-     * @return string
-     */
-    public function getSurname()
-    {
-        return $this->surname;
-    }
-
-    /**
-     * Set sex
-     *
-     * @param string $sex
-     *
-     * @return Agenda
-     */
-    public function setSex($sex)
-    {
-        $this->sex = $sex;
-
-        return $this;
-    }
-
-    /**
-     * Get sex
-     *
-     * @return string
-     */
-    public function getSex()
-    {
-        return $this->sex;
-    }
-
-    /**
-     * Set phoneNumber
-     *
-     * @param string $phoneNumber
-     *
-     * @return Agenda
-     */
-    public function setPhoneNumber($phoneNumber)
-    {
-        $this->phoneNumber = $phoneNumber;
-
-        return $this;
-    }
-
-    /**
-     * Get phoneNumber
-     *
-     * @return string
-     */
-    public function getPhoneNumber()
-    {
-        return $this->phoneNumber;
-    }
-
-    /**
-     * Set fotoFilename
-     *
-     * @param string $fotoFilename
-     *
-     * @return Agenda
-     */
-    public function setFotoFilename($fotoFilename)
-    {
-        $this->fotoFilename = $fotoFilename;
-
-        return $this;
-    }
-
-    /**
-     * Get fotoFilename
-     *
-     * @return string
-     */
-    public function getFotoFilename()
-    {
-        return $this->fotoFilename;
-    }
 }

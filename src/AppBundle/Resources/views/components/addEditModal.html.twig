@@ -1,12 +1,17 @@
 <!-- modale -->
-<div id="modal_nominativi" class="modal" tabindex="-1" role="dialog">
+<div id="add_edit_contact" class="modal" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title">Nuovo Contatto</h5>
 			</div>
 			<div class="modal-body">
-				<form id="agendaForm" enctype="multipart/form-data">
+
+
+				<img id="editImage" src="" class="card-img-top" alt="Foto Contatto">
+
+
+				<form enctype="multipart/form-data" id="contact_form" action="{{ path('save_agenda') }}" method="post">
 					<div class="form-group">
 						<input type="hidden" class="form-control" id="idModalEdit" name="id" value="">
 						<label for="name">Nome:</label>
@@ -36,10 +41,36 @@
 						<label for="fotoFilename">Foto:</label>
 						<input type="file" class="form-control" id="fotoFilename" name="fotoFilename">
 					</div>
+
+					<button type="submit" class="btn btn-warning">Save</button>
 				</form>
+
+				{# chiamate #}
+				<form enctype="multipart/form-data" id="chiamate_form" action="{{ path('save_chiamate') }}" method="post">
+					<table class="table" id="chiamateTable">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Data</th>
+								<th>Ora</th>
+								<th>Note</th>
+								<th></th>
+								<!-- per il bottone rimuovi -->
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Le righe saranno generate dinamicamente con JavaScript -->
+						</tbody>
+					</table>
+
+					<button id="addChiamata" class="btn btn-primary">Aggiungi Chiamata</button>
+				</form>
+
 			</div>
 			<div class="modal-footer">
-				<button type="button" id="buttonSave" class="btn btn-primary">Save changes</button>
+				<button type="button" id="buttonEditInForm" class="buttonEdit btn btn-warning" data-toggle="modal" data-id="" disabled>
+					Edit Modal
+				</button>
 				<button type="button" id="buttonClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>

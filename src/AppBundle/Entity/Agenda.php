@@ -63,6 +63,23 @@ class Agenda
      */
     private $fotoFilename;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="deleted", type="boolean", options={"default":false})
+     */
+    private $deleted = false;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Chiamate", mappedBy="agenda")
+     */
+    private $chiamate;
+
+    public function __construct() {
+        $this->chiamate = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
 
 
     /**
@@ -172,6 +189,30 @@ class Agenda
     }
 
     /**
+     * Set address
+     *
+     * @param string $address
+     *
+     * @return Agenda
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
      * Set fotoFilename
      *
      * @param string $fotoFilename
@@ -196,26 +237,60 @@ class Agenda
     }
 
     /**
-     * Set address
+     * Set deleted
      *
-     * @param string $address
+     * @param boolean $deleted
      *
      * @return Agenda
      */
-    public function setAddress($address)
+    public function setDeleted($deleted)
     {
-        $this->address = $address;
+        $this->deleted = $deleted;
 
         return $this;
     }
 
     /**
-     * Get address
+     * Get deleted
      *
-     * @return string
+     * @return boolean
      */
-    public function getAddress()
+    public function getDeleted()
     {
-        return $this->address;
+        return $this->deleted;
+    }
+
+    /**
+     * Add chiamate
+     *
+     * @param \AppBundle\Entity\Chiamate $chiamate
+     *
+     * @return Agenda
+     */
+    public function addChiamate(\AppBundle\Entity\Chiamate $chiamate)
+    {
+        $this->chiamate[] = $chiamate;
+
+        return $this;
+    }
+
+    /**
+     * Remove chiamate
+     *
+     * @param \AppBundle\Entity\Chiamate $chiamate
+     */
+    public function removeChiamate(\AppBundle\Entity\Chiamate $chiamate)
+    {
+        $this->chiamate->removeElement($chiamate);
+    }
+
+    /**
+     * Get chiamate
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChiamate()
+    {
+        return $this->chiamate;
     }
 }
