@@ -5,7 +5,9 @@ $(document).ready(function() {
     // apro modale
     $('#buttonAdd').on('click', function(){
 
+        currentContactId = null;
         // Resetta il form
+        $('#chiamateTable tbody').empty();
         $('#contact_form')[0].reset();
         $('#name, #surname, #phone_number, #address, #sex').attr('readonly', false);
         $('#fotoFilename').attr('type', 'file');
@@ -84,6 +86,7 @@ $(document).ready(function() {
 
         // Resetta l'immagine
         $('#editImage').attr('src', '');
+        $('#buttonEditInForm').attr('data-id', '');
         
  
        //shearch in database
@@ -113,7 +116,10 @@ $(document).ready(function() {
                             <td><input type="date" name="chiamate[${chiamata.id}][date]" value="${chiamata.date}"></td>
                             <td><input type="time" name="chiamate[${chiamata.id}][time]" value="${chiamata.time}"></td>
                             <td><input type="text" name="chiamate[${chiamata.id}][note]" value="${chiamata.note}"></td>
-                            <td><button type="button" class="btn btn-danger removeChiamata">Rimuovi</button></td>
+                            <td class="d-flex gap-1">
+                                <button type="button" class="btn btn-danger removeChiamata">x</button>
+                                <button type="button" class="btn btn-warning">M</button>
+                            </td>
                         </tr>`;
                     chiamateTbody.append(row);
                 })
@@ -151,14 +157,16 @@ $(document).ready(function() {
     $('#addChiamata').on('click', function() {
         let newRow = `
         <tr>
-            <td><input type="hidden" name="id_contatto" value="${currentContactId}"></td>
-            <td><input type="date" name="date" value=""></td>
-            <td><input type="time" name="time" value=""></td>
-            <td><input type="text" name="nota" value=""></td>
-            <td>
-                <button type="button" class="btn btn-danger removeChiamata">Rimuovi</button>
-                <button type="button" class="btn btn-success saveChiamata">Salva</button>
-            </td>
+            <form class="chiamataForm">
+                <td><input type="hidden" name="id_contatto" value="${currentContactId}"></td>
+                <td><input type="date" name="date" value=""></td>
+                <td><input type="time" name="time" value=""></td>
+                <td><input type="text" name="nota" value=""></td>
+                <td class="d-flex gap-1">
+                    <button type="button" class="btn btn-danger removeChiamata">x</button>
+                    <button type="button" class="btn btn-success saveChiamata">+</button>
+                </td>
+            </form>
         </tr>`;
     
         $('#chiamateTable tbody').append(newRow);
@@ -176,19 +184,41 @@ $(document).ready(function() {
     });
 
     function saveChiamata(row) {
-        let datiForm = row.find('input, select').serialize();
+        let formElement = row.find('form.chiamataForm')[0];
+        let datiForm = new FormData(formElement);
         console.log('dati della chiamata', datiForm);
-        $.post('/save-chiamata', datiForm, function(risposta) {
-            console.log(risposta);
-            if (risposta.status && risposta.status === 'success') {
+
+        $.ajax({
+            type: "POST",
+            url: '/save-chiamata',
+            data: datiForm,
+            contentType: false, // Imposta a false per permettere a jQuery di non impostare l'intestazione Content-Type
+            processData: false, // Imposta a false per impedire a jQuery di trasformare i dati FormData in una stringa di query
+            success: function(response) {
+                console.log(response);
+                if (response.status && response.status === 'success') {
+                    row.find('input, select').attr('disabled', true);
+                    row.find('.saveChiamata').attr('disabled', true);
+                } else {
+                    alert('Si è verificato un errore durante il salvataggio dei dati.');
+                }
+                }, error :function(){
+                    alert('Errore nell\'invio del form!');
+                }
+            });
+
+        // $.post('/save-chiamata', datiForm, function(risposta) {
+        //     console.log(risposta);
+        //     if (risposta.status && risposta.status === 'success') {
                 
-                window.location.href = '/';
-            } else {
-                alert('Si è verificato un errore durante il salvataggio dei dati.');
-            }
-        }).fail(function() {
-            alert('Errore nell\'invio del form!');
-        });
+        //         window.location.href = '/';
+        //     } else {
+        //         alert('Si è verificato un errore durante il salvataggio dei dati.');
+        //     }
+        // }).fail(function() {
+        //     console.error('Errore AJAX:', textStatus, errorThrown);
+        //     alert('Errore nell\'invio del form!');
+        // });
     }
     
 });

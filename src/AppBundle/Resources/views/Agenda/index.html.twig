@@ -4,7 +4,6 @@
 
 {% block body %}
 
-    {% include '@AppBundle/components/showModal.html.twig' %}
     {% include '@AppBundle/components/addEditModal.html.twig' %}
 
 
@@ -45,7 +44,8 @@
                             <td>{{ entry.surname }}</td>
                             <td>{{ entry.phoneNumber }}</td>
                             <td class="d-flex justify-content-center gap-3">
-                                <!-- <a href="{{ path('show_agenda', {'id': entry.id}) }}" class="btn btn-info">Show</a> -->
+                            
+                                <!-- {# <a href="{{ path('show_agenda', {'id': entry.id}) }}" class="btn btn-info">Show</a>  #}-->
                                 <div>
                                     <button type="button" class="buttonShow btn btn-info" data-toggle="modal"
                                         data-id="{{ entry.id }}"
@@ -53,7 +53,7 @@
                                         Show Modal
                                     </button>
                                 </div>
-                                <!-- <a href="{{ path('edit_agenda', {'id': entry.id}) }}" class="btn btn-warning">Modifica</a> -->
+                                <!-- {#<a href="{{ path('edit_agenda', {'id': entry.id}) }}" class="btn btn-warning">Modifica</a>  #}-->
                                 <div>
                                     <button type="button" class="buttonEdit btn btn-warning" data-toggle="modal"
                                         data-id="{{ entry.id }}"

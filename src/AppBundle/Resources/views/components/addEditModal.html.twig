@@ -5,10 +5,11 @@
 			<div class="modal-header">
 				<h5 class="modal-title">Nuovo Contatto</h5>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body position-relative">
 
-
-				<img id="editImage" src="" class="card-img-top" alt="Foto Contatto">
+				<div class="container w-25">
+					<img id="editImage" src="" class="card-img-top" alt="Foto Contatto">
+				</div>
 
 
 				<form enctype="multipart/form-data" id="contact_form" action="{{ path('save_agenda') }}" method="post">
@@ -46,24 +47,25 @@
 				</form>
 
 				{# chiamate #}
-
-				<table class="table" id="chiamateTable">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Data</th>
-							<th>Ora</th>
-							<th>Note</th>
-							<th></th>
-							<!-- per il bottone rimuovi -->
-						</tr>
-					</thead>
-					<tbody>
-						<!-- Le righe saranno generate dinamicamente con JavaScript -->
-					</tbody>
-				</table>
-
-				<button id="addChiamata" class="btn btn-primary">Aggiungi Chiamata</button>
+				<div class='position-absolute top-50 start-100 translate-middle-y bg-light rounded-4 p-3'>
+					<div class="container d-flex gap-4">
+						<h3>Chiamate</h3>
+						<button id="addChiamata" class="btn btn-primary">+</button>
+					</div>
+					<table class="table" id="chiamateTable">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Data</th>
+								<th>Ora</th>
+								<th>Note</th>
+								<th></th>
+								<!-- per il bottone rimuovi -->
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
 
 			</div>
 			<div class="modal-footer">
