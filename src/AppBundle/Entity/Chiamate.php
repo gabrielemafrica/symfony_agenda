@@ -43,6 +43,13 @@ class Chiamate
     private $note;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="id_contatto", type="integer")
+     */
+    private $id_contatto;
+
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Agenda", inversedBy="chiamate")
      * @ORM\JoinColumn(name="id_contatto", referencedColumnName="id")
      */
@@ -130,6 +137,30 @@ class Chiamate
     public function getNote()
     {
         return $this->note;
+    }
+
+    /**
+     * Set idContatto
+     *
+     * @param integer $idContatto
+     *
+     * @return Chiamate
+     */
+    public function setIdContatto($idContatto)
+    {
+        $this->id_contatto = $idContatto;
+
+        return $this;
+    }
+
+    /**
+     * Get idContatto
+     *
+     * @return integer
+     */
+    public function getIdContatto()
+    {
+        return $this->id_contatto;
     }
 
     /**

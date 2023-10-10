@@ -71,7 +71,7 @@ class AgendaController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $entry = $em->getRepository(Agenda::class)->find($id);
-
+        
         // prendo le chiamte
         $chiamate = $entry->getChiamate();
 
@@ -79,6 +79,7 @@ class AgendaController extends Controller
         foreach ($chiamate as $chiamata) {
             $chiamateArray[] = [
                 'id' => $chiamata->getId(),
+                'id_contatto' => $chiamata->getIdContatto(),
                 'date' => $chiamata->getDate()->format('Y-m-d'),  // assuming date is a DateTime object
                 'time' => $chiamata->getTime()->format('H:i:s'),  // assuming time is a DateTime object
                 'note' => $chiamata->getNote()
@@ -109,7 +110,7 @@ class AgendaController extends Controller
      */
     public function saveAction(Request $request)
     {
-
+        // var_dump($request);die;
         //get id
         $id = $request->request->get('id');
         $name = $request->request->get('name');
@@ -130,6 +131,39 @@ class AgendaController extends Controller
         $agenda->setPhoneNumber($phone_number);
         $agenda->setAddress($address);
         $agenda->setSex($sex);
+
+
+        // Gestione delle chiamate
+        $chiamateData = $request->request->get('chiamate');
+        $chiamataRepo = $em->getRepository(Chiamate::class);
+
+        foreach ($chiamateData as $chiamataData) {
+            $chiamataId = isset($chiamataData['id']) ? $chiamataData['id'] : null;
+            $chiamata = null;
+
+        // Verifica se l'ID della chiamata esiste, e in tal caso, recuperare quella chiamata
+        if ($chiamataId) {
+            $chiamata = $chiamataRepo->find($chiamataId);
+        }
+
+        // Se la chiamata con quell'ID non esiste, creiamo una nuova
+        if (!$chiamata) {
+            $chiamata = new Chiamate();
+            $chiamata->setAgenda($agenda);
+        }
+
+        // $chiamata->setIdContatto($chiamataData['id_contatto']);
+        $chiamata->setDate(new \DateTime($chiamataData['date']));
+        $chiamata->setTime(new \DateTime($chiamataData['time']));
+        $chiamata->setNote($chiamataData['note']);
+
+        // relazione tra Agenda e Chiamata
+        // $chiamata->setAgenda($agenda);
+        // $agenda->addChiamate($chiamata);
+
+        $em->persist($chiamata);
+
+        }
 
         // Gestione immagine
         /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */

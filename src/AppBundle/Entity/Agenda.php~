@@ -81,4 +81,216 @@ class Agenda
     }
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Agenda
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set surname
+     *
+     * @param string $surname
+     *
+     * @return Agenda
+     */
+    public function setSurname($surname)
+    {
+        $this->surname = $surname;
+
+        return $this;
+    }
+
+    /**
+     * Get surname
+     *
+     * @return string
+     */
+    public function getSurname()
+    {
+        return $this->surname;
+    }
+
+    /**
+     * Set sex
+     *
+     * @param string $sex
+     *
+     * @return Agenda
+     */
+    public function setSex($sex)
+    {
+        $this->sex = $sex;
+
+        return $this;
+    }
+
+    /**
+     * Get sex
+     *
+     * @return string
+     */
+    public function getSex()
+    {
+        return $this->sex;
+    }
+
+    /**
+     * Set phoneNumber
+     *
+     * @param string $phoneNumber
+     *
+     * @return Agenda
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get phoneNumber
+     *
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     *
+     * @return Agenda
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set fotoFilename
+     *
+     * @param string $fotoFilename
+     *
+     * @return Agenda
+     */
+    public function setFotoFilename($fotoFilename)
+    {
+        $this->fotoFilename = $fotoFilename;
+
+        return $this;
+    }
+
+    /**
+     * Get fotoFilename
+     *
+     * @return string
+     */
+    public function getFotoFilename()
+    {
+        return $this->fotoFilename;
+    }
+
+    /**
+     * Set deleted
+     *
+     * @param boolean $deleted
+     *
+     * @return Agenda
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+
+        return $this;
+    }
+
+    /**
+     * Get deleted
+     *
+     * @return boolean
+     */
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * Add chiamate
+     *
+     * @param \AppBundle\Entity\Chiamate $chiamate
+     *
+     * @return Agenda
+     */
+    public function addChiamate(\AppBundle\Entity\Chiamate $chiamate)
+    {
+        $this->chiamate[] = $chiamate;
+
+        return $this;
+    }
+
+    /**
+     * Remove chiamate
+     *
+     * @param \AppBundle\Entity\Chiamate $chiamate
+     */
+    public function removeChiamate(\AppBundle\Entity\Chiamate $chiamate)
+    {
+        $this->chiamate->removeElement($chiamate);
+    }
+
+    /**
+     * Get chiamate
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChiamate()
+    {
+        return $this->chiamate;
+    }
 }

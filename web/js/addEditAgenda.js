@@ -1,4 +1,5 @@
 let currentContactId = null;
+let currentIndex = null;
 
 $(document).ready(function() {
 
@@ -34,7 +35,6 @@ $(document).ready(function() {
         
         // // dati form come oggetto
         // var datiForm = $(this).serialize();
-
         // // chiamata AJAX
         // $.post('/save', datiForm, function(risposta) {
         //     console.log(risposta);
@@ -46,10 +46,10 @@ $(document).ready(function() {
         // }).fail(function() {
         //     alert('Errore nell\'invio del form!');
         // });
-
         // dati form come oggetto FormData
-        var datiForm = new FormData(this);
 
+        var datiForm = new FormData(this);
+        // console.log('i miei dati: ', datiForm);
         // chiamata AJAX
         $.ajax({
             url: '/save',
@@ -63,6 +63,8 @@ $(document).ready(function() {
                     window.location.href = '/';
                 } else {
                     alert('Si è verificato un errore durante il salvataggio dei dati.');
+                    console.log('ecco la risposta');
+                    console.log(risposta);
                 }
             },
             error: function() {
@@ -72,7 +74,7 @@ $(document).ready(function() {
 
 
 
-        $("#add_edit_contact").modal('hide')
+        // $("#add_edit_contact").modal('hide')
     });
 
     // mostro dati da modificare
@@ -110,12 +112,14 @@ $(document).ready(function() {
 
                 // popola la tabella
                 response.chiamate.forEach(function(chiamata){
+                    currentIndex ++;
                     let row =
                         `<tr>
-                            <td>${chiamata.id}</td>
-                            <td><input type="date" name="chiamate[${chiamata.id}][date]" value="${chiamata.date}"></td>
-                            <td><input type="time" name="chiamate[${chiamata.id}][time]" value="${chiamata.time}"></td>
-                            <td><input type="text" name="chiamate[${chiamata.id}][note]" value="${chiamata.note}"></td>
+                            <td><input type="text" name="chiamate[${currentIndex}][id]" value="${chiamata.id}" readonly></td>
+                            <td><input type="text" name="chiamate[${currentIndex}][id_contatto]" value="${chiamata.id_contatto}" readonly></td>
+                            <td><input type="date" name="chiamate[${currentIndex}][date]" value="${chiamata.date}" readonly></td>
+                            <td><input type="time" name="chiamate[${currentIndex}][time]" value="${chiamata.time}" readonly></td>
+                            <td><input type="text" name="chiamate[${currentIndex}][note]" value="${chiamata.note}"></td>
                             <td class="d-flex gap-1">
                                 <button type="button" class="btn btn-danger removeChiamata">x</button>
                                 <button type="button" class="btn btn-warning">M</button>
@@ -155,22 +159,21 @@ $(document).ready(function() {
     // aggiongo chiamata
 
     $('#addChiamata').on('click', function() {
+        event.preventDefault();
+        currentIndex ++;
         let newRow = `
         <tr>
-            <form class="chiamataForm">
-                <td><input type="hidden" name="id_contatto" value="${currentContactId}"></td>
-                <td><input type="date" name="date" value=""></td>
-                <td><input type="time" name="time" value=""></td>
-                <td><input type="text" name="nota" value=""></td>
-                <td class="d-flex gap-1">
-                    <button type="button" class="btn btn-danger removeChiamata">x</button>
-                    <button type="button" class="btn btn-success saveChiamata">+</button>
-                </td>
-            </form>
+            <td><input type="text" name="chiamate[${currentIndex}][id]" ></td>
+            <td><input type="text" name="chiamate[${currentIndex}][id_contatto]" value="${currentContactId}"></td>
+            <td><input type="date" name="chiamate[${currentIndex}][date]"></td>
+            <td><input type="time" step="1" name="chiamate[${currentIndex}][time]" ></td>
+            <td><input type="text" name="chiamate[${currentIndex}][note]" ></td>
+            <td class="d-flex gap-1">
+                <button type="button" class="btn btn-danger removeChiamata">x</button>
+            </td>
         </tr>`;
     
         $('#chiamateTable tbody').append(newRow);
-        console.log();
     });
     
     // Per rimuovere una riga
