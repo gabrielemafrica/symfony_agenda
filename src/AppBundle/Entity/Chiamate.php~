@@ -56,4 +56,134 @@ class Chiamate
     private $agenda;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     *
+     * @return Chiamate
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set time
+     *
+     * @param \DateTime $time
+     *
+     * @return Chiamate
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    /**
+     * Get time
+     *
+     * @return \DateTime
+     */
+    public function getTime()
+    {
+        return $this->time;
+    }
+
+    /**
+     * Set note
+     *
+     * @param string $note
+     *
+     * @return Chiamate
+     */
+    public function setNote($note)
+    {
+        $this->note = $note;
+
+        return $this;
+    }
+
+    /**
+     * Get note
+     *
+     * @return string
+     */
+    public function getNote()
+    {
+        return $this->note;
+    }
+
+    /**
+     * Set idContatto
+     *
+     * @param integer $idContatto
+     *
+     * @return Chiamate
+     */
+    public function setIdContatto($idContatto)
+    {
+        $this->id_contatto = $idContatto;
+
+        return $this;
+    }
+
+    /**
+     * Get idContatto
+     *
+     * @return integer
+     */
+    public function getIdContatto()
+    {
+        return $this->id_contatto;
+    }
+
+    /**
+     * Set agenda
+     *
+     * @param \AppBundle\Entity\Agenda $agenda
+     *
+     * @return Chiamate
+     */
+    public function setAgenda(\AppBundle\Entity\Agenda $agenda = null)
+    {
+        $this->agenda = $agenda;
+
+        return $this;
+    }
+
+    /**
+     * Get agenda
+     *
+     * @return \AppBundle\Entity\Agenda
+     */
+    public function getAgenda()
+    {
+        return $this->agenda;
+    }
 }

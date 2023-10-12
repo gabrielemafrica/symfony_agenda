@@ -1,77 +1,96 @@
 <!-- modale -->
-<div id="add_edit_contact" class="modal" tabindex="-1" role="dialog">
+<div id="add_edit_contact" class="modal modal-xl pb-5" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header d-flex justify-content-center">
 				<h5 class="modal-title">Nuovo Contatto</h5>
 			</div>
-			<div class="modal-body position-relative">
+			<div class="modal-body">
 
-				<div class="container w-25">
-					<img id="editImage" src="" class="card-img-top" alt="Foto Contatto">
+				<div id="foto-container" style="height: 200px; width: 200px; border-radius: 50%; overflow: hidden; margin: 0 auto;">
+					<img id="editImage" src="" class="card-img-top" alt="Foto Contatto" style="width: 100%; height: 100%; object-fit: cover;">
 				</div>
 
 				<form enctype="multipart/form-data" id="contact_form" action="{{ path('save_agenda') }}" method="post">
-					<div class="form-group">
-						<input type="hidden" class="form-control" id="idModalEdit" name="id" value="">
-						<label for="name">Nome:</label>
-						<input type="text" class="form-control" id="name" name="name">
+					<div class="container d-flex justify-content-around">
+						<div class="form-group w-25 mx-auto">
+							<input type="hidden" class="form-control" id="idModalEdit" name="id" value="">
+							<label for="name">Nome:</label>
+							<input type="text" class="form-control" id="name" name="name" required>
+						</div>
+						<div class="form-group w-25 mx-auto">
+							<label for="surname">Cognome:</label>
+							<input type="text" class="form-control" id="surname" name="surname" required>
+						</div>
+						<div class="form-group w-25 mx-auto">
+							<label for="phone_number">Telefono:</label>
+							<input type="text" class="form-control" id="phone_number" name="phone_number">
+						</div>
 					</div>
-					<div class="form-group">
-						<label for="surname">Cognome:</label>
-						<input type="text" class="form-control" id="surname" name="surname">
+					<div class="container d-flex justify-content-around">
+						<div class="form-group w-25 mx-auto">
+							<label for="address">Indirizzo:</label>
+							<input type="text" class="form-control" id="address" name="address">
+						</div>
+						<div class="form-group w-25 mx-auto">
+							<label for="sex">Sesso:</label>
+							<select class="form-control" id="sex" name="sex">
+								<option value="">Seleziona...</option>
+								<option value="Maschio">Maschio</option>
+								<option value="Femmina">Femmina</option>
+							</select>
+						</div>
+						<div class="form-group w-25 mx-auto">
+							<label for="fotoFilename" id="fotoFilenameLabel">Foto:</label>
+							<input type="file" class="form-control" id="fotoFilename" name="fotoFilename">
+						</div>
 					</div>
-					<div class="form-group">
-						<label for="phone_number">Telefono:</label>
-						<input type="text" class="form-control" id="phone_number" name="phone_number">
-					</div>
-					<div class="form-group">
-						<label for="address">Indirizzo:</label>
-						<input type="text" class="form-control" id="address" name="address">
-					</div>
-					<div class="form-group">
-						<label for="sex">Sesso:</label>
-						<select class="form-control" id="sex" name="sex">
-							<option value="">Seleziona...</option>
-							<option value="Maschio">Maschio</option>
-							<option value="Femmina">Femmina</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="fotoFilename">Foto:</label>
-						<input type="file" class="form-control" id="fotoFilename" name="fotoFilename">
-					</div>
+					<div id="container_chiamate">
+						<div class="container d-flex gap-4 justify-content-center mt-4 pt-4 border-top">
+							<h3>Chiamate</h3>
+							<button id="addChiamata" class="btn btn-primary">+</button>
+						</div>
+						<div class="container p-5 pb-1 pt-1">
+							
+							
+							<table class="table-responsive " id="chiamateTable">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>user id</th>
+										<th>Data</th>
+										<th>Ora</th>
+										<th>Note</th>
+										<th></th>
+										<!-- per il bottone rimuovi -->
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+							
+							<div id="noCallsMessage" class="mx-auto bg-dark rounded-5 text-light w-50 py-1" style="display: none;">
+								<h3 class="text-center">Non ci sono chiamate</h3>
+							</div>
 
-					<div class="container d-flex gap-4">
-						<h3>Chiamate</h3>
-						<button id="addChiamata" class="btn btn-primary">+</button>
+								
+							
+
+						</div>
 					</div>
-
-
-					<table class="table" id="chiamateTable">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>user id</th>
-								<th>Data</th>
-								<th>Ora</th>
-								<th>Note</th>
-								<th></th>
-								<!-- per il bottone rimuovi -->
-							</tr>
-						</thead>
-						<tbody></tbody>
-					</table>
-					<button type="submit" class="btn btn-warning">Save</button>
+					<div class="container d-flex justify-content-end gap-1 mt-3">
+						<button type="submit" class="btn btn-warning">Save</button>
+						<button type="button" id="buttonClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
 				</form>
 
 			</div>
-			<div class="modal-footer">
+			<!-- <div class="modal-footer">
+
 				<button type="button" id="buttonEditInForm" class="buttonEdit btn btn-warning" data-toggle="modal" data-id="" disabled>
 					Edit Modal
 				</button>
-				<button type="button" id="buttonClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			</div>
+				
+			</div> -->
 		</div>
 	</div>
 </div>

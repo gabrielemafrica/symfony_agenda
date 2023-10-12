@@ -23,41 +23,41 @@ class AgendaController extends Controller
 
         $entries = $this->getDoctrine()->getRepository(Agenda::class)->findBy(['deleted' => false]);
 
-        // form
-        $agenda = new Agenda();
-        $form = $this->createForm(AgendaType::class, $agenda);
+        // // form
+        // $agenda = new Agenda();
+        // $form = $this->createForm(AgendaType::class, $agenda);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // gestione immagine
-            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
-            $fotoFile = $form['fotoFilename']->getData();
+        // $form->handleRequest($request);
+        // if ($form->isSubmitted() && $form->isValid()) {
+        //     // gestione immagine
+        //     /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
+        //     $fotoFile = $form['fotoFilename']->getData();
             
-            if ($fotoFile) {
-                $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+        //     if ($fotoFile) {
+        //         $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
+        //         $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
 
-                $fotoFile->move(
-                    $this->getParameter('foto_directory'),
-                    $newFilename
-                );
+        //         $fotoFile->move(
+        //             $this->getParameter('foto_directory'),
+        //             $newFilename
+        //         );
 
-                $agenda->setFotoFilename($newFilename);
-            }
+        //         $agenda->setFotoFilename($newFilename);
+        //     }
 
-            // gestisco maiuscole
-            $agenda->setName(ucfirst(strtolower($agenda->getName())));
-            $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));
+        //     // gestisco maiuscole
+        //     $agenda->setName(ucfirst(strtolower($agenda->getName())));
+        //     $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($agenda);
-            $em->flush();
+        //     $em = $this->getDoctrine()->getManager();
+        //     $em->persist($agenda);
+        //     $em->flush();
 
-            return $this->redirectToRoute('homepage');
-        }
+        //     return $this->redirectToRoute('homepage');
+        // }
 
         return $this->render('@AppBundle/Agenda/index.html.twig', [
-            'form' => $form->createView(),
+            // 'form' => $form->createView(),
             'entries' => $entries,
         ]);
     }
@@ -92,6 +92,9 @@ class AgendaController extends Controller
 
         $package = new Package(new EmptyVersionStrategy());
         $imageUrl = $package->getUrl('uploads/fotos/' . $entry->getFotoFilename());
+        if (!$entry->getFotoFilename()) {
+            $imageUrl = $package->getUrl('uploads/fotos/no-img.webp');
+        }
 
         return new JsonResponse([
             'id' => $entry->getId(),
@@ -110,11 +113,15 @@ class AgendaController extends Controller
      */
     public function saveAction(Request $request)
     {
-        // var_dump($request);die;
-        //get id
+        // funzioni
+        function capitalizeWords($string) {
+            return implode(' ', array_map('ucfirst', explode(' ', strtolower($string))));
+        }
+
+        // recupero dei dati dal request
         $id = $request->request->get('id');
-        $name = $request->request->get('name');
-        $surname = $request->request->get('surname');
+        $name = capitalizeWords($request->request->get('name'));
+        $surname = capitalizeWords($request->request->get('surname'));        
         $phone_number = $request->request->get('phone_number');
         $address = $request->request->get('address');
         $sex = $request->request->get('sex');
@@ -126,44 +133,12 @@ class AgendaController extends Controller
             $agenda = new Agenda();
         }
 
+        // settaggio delle proprietà
         $agenda->setName($name);
         $agenda->setSurname($surname);
         $agenda->setPhoneNumber($phone_number);
         $agenda->setAddress($address);
         $agenda->setSex($sex);
-
-
-        // Gestione delle chiamate
-        $chiamateData = $request->request->get('chiamate');
-        $chiamataRepo = $em->getRepository(Chiamate::class);
-
-        foreach ($chiamateData as $chiamataData) {
-            $chiamataId = isset($chiamataData['id']) ? $chiamataData['id'] : null;
-            $chiamata = null;
-
-        // Verifica se l'ID della chiamata esiste, e in tal caso, recuperare quella chiamata
-        if ($chiamataId) {
-            $chiamata = $chiamataRepo->find($chiamataId);
-        }
-
-        // Se la chiamata con quell'ID non esiste, creiamo una nuova
-        if (!$chiamata) {
-            $chiamata = new Chiamate();
-            $chiamata->setAgenda($agenda);
-        }
-
-        // $chiamata->setIdContatto($chiamataData['id_contatto']);
-        $chiamata->setDate(new \DateTime($chiamataData['date']));
-        $chiamata->setTime(new \DateTime($chiamataData['time']));
-        $chiamata->setNote($chiamataData['note']);
-
-        // relazione tra Agenda e Chiamata
-        // $chiamata->setAgenda($agenda);
-        // $agenda->addChiamate($chiamata);
-
-        $em->persist($chiamata);
-
-        }
 
         // Gestione immagine
         /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
@@ -171,23 +146,65 @@ class AgendaController extends Controller
         
         if ($fotoFile) {
             $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
-            $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
+            $newFilename = $originalFilename.'-'.uniqid().'.'.$fotoFile->guessExtension();
 
+            // spostamento del file nel directory di destinazione
             $fotoFile->move(
                 $this->getParameter('foto_directory'),
                 $newFilename
             );
 
+            // salvataggio del filename nel database
             $agenda->setFotoFilename($newFilename);
         }
-        
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($agenda);
-        $entityManager->flush();
 
-        // return $this->redirectToRoute('homepage');
+        // Se è una nuova agenda, salvala e termina la funzione
+        if (!$agenda->getId()) {
+            $em->persist($agenda);
+            $em->flush();
+
+            return new JsonResponse(['status' => 'success']);
+        }
+
+        // Di seguito, la logica per la gestione delle chiamate, che viene applicata solo se l'agenda esiste già.
+        $chiamateData = $request->request->get('chiamate');
+
+        if ($chiamateData && is_array($chiamateData)) {
+            $chiamataRepo = $em->getRepository(Chiamate::class);
+
+            foreach ($chiamateData as $chiamataData) {
+                $chiamataId = isset($chiamataData['id']) ? $chiamataData['id'] : null;
+                $chiamata = null;
+
+                // Verifica se l'ID della chiamata esiste, e in tal caso, recuperare quella chiamata
+                if ($chiamataId) {
+                    $chiamata = $chiamataRepo->find($chiamataId);
+                }
+
+                // Se la chiamata con quell'ID non esiste, creiamo una nuova
+                if (!$chiamata) {
+                    $chiamata = new Chiamate();
+                    $chiamata->setAgenda($agenda);
+                }
+
+                $chiamata->setDate(new \DateTime($chiamataData['date']));
+                $chiamata->setTime(new \DateTime($chiamataData['time']));
+                $chiamata->setNote($chiamataData['note']);
+
+                // salvataggio della chiamata
+                $em->persist($chiamata);
+            }
+        }
+
+        // salvataggio delle entità
+        $em->persist($agenda);
+        $em->flush();
+
+
+
         return new JsonResponse(['status' => 'success']);
     }
+
     /**
      * @Route("/save-chiamata", name="save_chiamata", methods={"POST"})
      */
@@ -225,20 +242,20 @@ class AgendaController extends Controller
     /**
      * @Route("/delete", name="delete_agenda")
      */
-        public function deleteAction(Request $request)
-        {
-            // $id = $request->request->get('id');
-            $id = $request->query->get('id');
-            error_log("ID: " . $id);
-            $em = $this->getDoctrine()->getManager();
-            $agenda = $em->getRepository(Agenda::class)->find($id);
+    public function deleteAction(Request $request)
+    {
+        // $id = $request->request->get('id');
+        $id = $request->query->get('id');
+        error_log("ID: " . $id);
+        $em = $this->getDoctrine()->getManager();
+        $agenda = $em->getRepository(Agenda::class)->find($id);
 
-            if ($agenda) {
-                $agenda->setDeleted(true);
-                $em->persist($agenda);
-                $em->flush();
-            }
-
-            return $this->redirectToRoute('homepage');
+        if ($agenda) {
+            $agenda->setDeleted(true);
+            $em->persist($agenda);
+            $em->flush();
         }
+
+        return $this->redirectToRoute('homepage');
+    }
 }
