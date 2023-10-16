@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Agenda
@@ -70,16 +71,23 @@ class Agenda
      */
     private $deleted = false;
 
-
+    
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Chiamate", mappedBy="agenda")
      */
     private $chiamate;
-
+    
     public function __construct() {
-        $this->chiamate = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->chiamate = new ArrayCollection();
+        $this->competenze = new ArrayCollection();
+        
     }
-
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Competenze", inversedBy="agendas")
+     * @ORM\JoinTable(name="agenda_competenze")
+     */
+    private $competenze;
 
 
     /**
@@ -292,5 +300,47 @@ class Agenda
     public function getChiamate()
     {
         return $this->chiamate;
+    }
+
+    /**
+     * Add competenze
+     *
+     * @param \AppBundle\Entity\Competenze $competenze
+     *
+     * @return Agenda
+     */
+    public function addCompetenze(\AppBundle\Entity\Competenze $competenze)
+    {
+        if (!$this->competenze->contains($competenze)) {
+            $this->competenze->add($competenze);
+            $competenze->addAgenda($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove competenze
+     *
+     * @param \AppBundle\Entity\Competenze $competenze
+     */
+    public function removeCompetenze(\AppBundle\Entity\Competenze $competenze)
+    {
+        if ($this->competenze->contains($competenze)) {
+            $this->competenze->removeElement($competenze);
+            $competenze->removeAgenda($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get competenze
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCompetenze()
+    {
+        return $this->competenze;
     }
 }
