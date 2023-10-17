@@ -6,89 +6,181 @@
 {% block body %}
 
 	{% include '@AppBundle/components/addEditModal.html.twig' %}
+	{% include '@AppBundle/components/addEditModalCompetenze.html.twig' %}
 
+	<!-- agenda -->
+	<div class="tab-pane fade show active" id="nav-agenda" role="tabpanel" aria-labelledby="nav-agenda-tab">	
+		<div class="container mt-2 text-center">
 
-	<div class="container mt-5 text-center">
+			<h1>La tua Agenda</h1>
 
-		<h1>La tua Agenda</h1>
-
-		<!-- {# <a href="{{ path('add_agenda') }}" class="btn btn-primary my-4">Aggiungi Contatto</a> #} -->
-		<div class="my-3">
-			<button type="button" id="buttonAdd" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-				Aggiungi contatto
-			</button>
-		</div>
-
-		<!-- <div>
-														            <button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-														                Aggiungi contatto con entity-form
-														            </button>
-														        </div> -->
-
-		{% if entries|length > 0 %}
-			<div class='container'>
-				<table class="table table-hover text-center">
-					<thead>
-						<tr>
-							<th scope="col">Foto</th>
-							<th scope="col">ID</th>
-							<th scope="col">Nome</th>
-							<th scope="col">Cognome</th>
-							<th scope="col">Numero di Telefono</th>
-							<th scope="col">AZIONI</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for entry in entries %}
-							<tr>
-								<td>
-                                    <div style="height: 40px; width: 40px; border-radius: 50%; overflow: hidden; margin: 0 auto;">
-                                        {% if entry.fotoFilename %}
-                                            <img src="{{ asset('uploads/fotos/' ~ entry.fotoFilename) }}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">
-                                        {% else %}
-                                            <img src="{{ asset('uploads/fotos/no-img.webp') }}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">
-                                        {% endif %}
-                                    </div>
-                                </td>
-								<td>{{ entry.id }}</td>
-								<td>{{ entry.name }}</td>
-								<td>{{ entry.surname }}</td>
-								<td>{{ entry.phoneNumber }}</td>
-								<td
-									class="d-flex justify-content-center gap-3">
-
-									<!-- {# <a href="{{ path('show_agenda', {'id': entry.id}) }}" class="btn btn-info">Show</a>  #}-->
-									<div>
-										<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ entry.id }}">
-											Show Modal
-										</button>
-									</div>
-									<!-- {#<a href="{{ path('edit_agenda', {'id': entry.id}) }}" class="btn btn-warning">Modifica</a>  #}-->
-									<div>
-										<button type="button" class="buttonEdit btn btn-warning" data-toggle="modal" data-id="{{ entry.id }}">
-											Edit Modal
-										</button>
-									</div>
-									<div>
-										<a href="{{ path('delete_agenda', {'id': entry.id}) }}" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo contatto?');">Delete</a>
-									</div>
-									<!-- <form action="{{ path('delete_agenda') }}" method="post"
-																																																															                                onsubmit="return confirm('Sei sicuro di voler eliminare questo contatto?');"
-																																																															                                >
-																																																															                                    <input type="hidden" name="id" value="{{ entry.id }}">
-																																																															                                    <button type="submit" class="btn btn-danger">Elimina</button>
-																																																															                                </form> -->
-
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+			<!-- {# <a href="{{ path('add_agenda') }}" class="btn btn-primary my-4">Aggiungi Contatto</a> #} -->
+			<div class="my-3">
+				<button type="button" id="buttonAdd" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+					Aggiungi contatto
+				</button>
 			</div>
-		{% else %}
-			<h3>La tua agenda è vuota.</h3>
-		{% endif %}
+
+			<!-- <div>
+				<button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+					Aggiungi contatto con entity-form
+				</button>
+			</div> -->
+
+			{% if entries|length > 0 %}
+				<div class='container'>
+					<table class="table table-hover text-center">
+						<thead>
+							<tr>
+								<th scope="col">Foto</th>
+								<th scope="col">ID</th>
+								<th scope="col">Nome</th>
+								<th scope="col">Cognome</th>
+								<th scope="col">Numero di Telefono</th>
+								<th scope="col">AZIONI</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for entry in entries %}
+								<tr>
+									<td>
+										<div style="height: 40px; width: 40px; border-radius: 50%; overflow: hidden; margin: 0 auto;">
+											{% if entry.fotoFilename %}
+												<img src="{{ asset('uploads/fotos/' ~ entry.fotoFilename) }}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">
+											{% else %}
+												<img src="{{ asset('uploads/fotos/no-img.webp') }}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">
+											{% endif %}
+										</div>
+									</td>
+									<td>{{ entry.id }}</td>
+									<td>{{ entry.name }}</td>
+									<td>{{ entry.surname }}</td>
+									<td>{{ entry.phoneNumber }}</td>
+									<td
+										class="d-flex justify-content-center gap-3">
+
+										<!-- {# <a href="{{ path('show_agenda', {'id': entry.id}) }}" class="btn btn-info">Show</a>  #}-->
+										<div>
+											<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ entry.id }}">
+												Show Modal
+											</button>
+										</div>
+										<!-- {#<a href="{{ path('edit_agenda', {'id': entry.id}) }}" class="btn btn-warning">Modifica</a>  #}-->
+										<div>
+											<button type="button" class="buttonEdit btn btn-warning" data-toggle="modal" data-id="{{ entry.id }}">
+												Edit Modal
+											</button>
+										</div>
+										<div>
+											<a href="{{ path('delete_agenda', {'id': entry.id}) }}" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo contatto?');">Delete</a>
+										</div>
+										<!-- <form action="{{ path('delete_agenda') }}" method="post"
+																																																																				</form> -->
+
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% else %}
+				<h3>La tua agenda è vuota.</h3>
+			{% endif %}
+		</div>
 	</div>
 
-	<script></script>
+	<!-- competenze -->
+	<div class="tab-pane fade" id="nav-competenze" role="tabpanel" aria-labelledby="nav-competenze-tab">
+		<div class="container mt-2 text-center">
+			<h1>Le Competenze</h1>
+
+			<div class="my-3">
+				<button type="button" id="buttonAddCompetenza" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+					Aggiungi competenza
+				</button>
+			</div>
+
+			<table id="competenzeTable" class="display">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Descrizione</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for competenza in competenze %}
+					<tr>
+						<td>{{ competenza.id }}</td>
+						<td>
+							<!-- Accordion wrapper -->
+							<div class="accordion" id="competenzeAccordion{{ competenza.id }}">
+								<!-- Accordion item -->
+								<div class="accordion-item">
+									<!-- Accordion header -->
+									<h2 class="accordion-header">
+										<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+											data-bs-target="#collapse{{ competenza.id }}" aria-expanded="false"
+											aria-controls="collapse{{ competenza.id }}">
+											{{ competenza.description }}
+										</button>
+									</h2>
+									<!-- Content for the accordion when it is opened -->
+									<div id="collapse{{ competenza.id }}" class="accordion-collapse collapse"
+										aria-labelledby="heading{{ competenza.id }}"
+										data-bs-parent="#competenzeAccordion{{ competenza.id }}">
+										<div class="accordion-body">
+											<h5>Persone con {{ competenza.description }}</h5>
+											<div class="container d-flex justify-content-center gap-2 flex-wrap">
+												{% for agenda in competenza.getAgenda() %}
+												<div>
+													<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ agenda.getAgenda().getId() }}">
+														{{ agenda.getAgenda().getName() }}
+														{{ agenda.getAgenda().getSurname() }}
+													</button>
+												</div>
+												{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- End of Accordion item -->
+							</div>
+							<!-- End of Accordion wrapper -->
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+				
+			</table>
+		</div>	
+	</div>
+
+	<!-- chiamate -->
+	<div class="tab-pane fade" id="nav-chiamate" role="tabpanel" aria-labelledby="nav-chiamate-tab">
+		<div class="container mt-2 text-center">
+
+			<table id="allChiamateTable" class="display">
+				<thead>
+					<tr>
+						<th>Id contatto</th>
+						<th>Nominativo</th>
+						<th>Data</th>
+						<th>Durata</th>
+						<th>Note</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for chiamata in chiamate %}
+						<tr>
+							<td>{{ chiamata.getIdContatto() }}</td>
+							<td>{{ chiamata.getAgenda().getName() }} {{ chiamata.getAgenda().getSurname() }}</td>
+							<td>{{ chiamata.getDate().format('Y-m-d') }}</td>
+							<td>{{ chiamata.getTime().format('H:i:s') }}</td>
+							<td>{{ chiamata.getNote() }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>	
+	</div>
 {% endblock %}

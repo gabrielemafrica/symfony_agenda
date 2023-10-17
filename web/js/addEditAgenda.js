@@ -3,6 +3,9 @@ let currentIndex = null;
 let usableCounter = 0;
 
 $(document).ready(function() {
+    // data table
+    $('#allChiamateTable').DataTable();
+    $('#competenzeTable').DataTable();
 
     // apro modale
     $('#buttonAdd').on('click', function(){
@@ -18,7 +21,7 @@ $(document).ready(function() {
         $('#fotoFilename').attr('type', 'file');
         $('#fotoFilename').attr('disabled', false);
         $('#buttonSave, #sex').attr('disabled', false);
-        $('#buttonEditInForm').attr('disabled', true);
+        // $('#buttonEditInForm').attr('disabled', true);
         $('button[type="submit"]').show();
         $('#fotoFilenameLabel').show();
         // Resetta l'immagine
@@ -28,7 +31,34 @@ $(document).ready(function() {
         $('#container_chiamate').hide();
         $('.form-control').removeClass('border-0');
         $('#foto-container').hide();
-        
+        // resetto chiamate
+        let elencoCompetenze = $('#container-competenze');
+        elencoCompetenze.empty();
+
+        // popolo competenze
+                    // // dati form come oggetto
+            // var datiForm = $(this).serialize();
+        const id = null;
+        $.post('/editCall', id, function(risposta) {
+            console.log(risposta);
+            risposta.forEach(function(competenza){
+
+                let checkButton =
+                    `
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="competenza[${competenza.id}]" name="competenza[${competenza.id}]" value="${competenza.id}">
+                        <label for="competenza[${competenza.id}]">${competenza.description}</label><br>
+                    </div>
+                    `;
+    
+                elencoCompetenze.append(checkButton);
+            });
+        }).fail(function() {
+            alert('Errore nell\'invio dei dati!');
+        });
+
+       
+    
     });
 
     // chiudo modale
@@ -41,21 +71,6 @@ $(document).ready(function() {
     $('#contact_form').submit(function(event) {
         
         event.preventDefault();
-        
-        // // dati form come oggetto
-        // var datiForm = $(this).serialize();
-        // // chiamata AJAX
-        // $.post('/save', datiForm, function(risposta) {
-        //     console.log(risposta);
-        //     if (risposta.status && risposta.status === 'success') {
-        //         window.location.href = '/';
-        //     } else {
-        //         alert('Si è verificato un errore durante il salvataggio dei dati.');
-        //     }
-        // }).fail(function() {
-        //     alert('Errore nell\'invio del form!');
-        // });
-        // dati form come oggetto FormData
 
         var datiForm = new FormData(this);
         console.log('i miei dati: ', datiForm);
@@ -104,7 +119,7 @@ $(document).ready(function() {
 
         // Resetta l'immagine
         $('#editImage').attr('src', '');
-        $('#buttonEditInForm').attr('data-id', '');
+
         
  
        //shearch in database
@@ -113,6 +128,8 @@ $(document).ready(function() {
             url: '/editCall',
             data: {id: id},
             success: function(response) {
+                console.log('ecco i miei dati: ', response);
+
                 currentContactId = response.id;
                 $('#idModalEdit').val(response.id);
                 $('#name').val(response.name);
@@ -121,10 +138,13 @@ $(document).ready(function() {
                 $('#address').val(response.address);
                 $('#sex').val(response.sex);
                 $('#editImage').attr('src', response.fotoFilename);
-                // $('#buttonEditInForm').attr('data-id', currentContactId);
+                $('#buttonEditId').data('id', response.id);
+
 
                 let chiamateTbody = $('#chiamateTable tbody');
                 chiamateTbody.empty(); // rimuovi le righe precedenti
+                let elencoCompetenze = $('#container-competenze');
+                elencoCompetenze.empty(); // rimuovi le righe precedenti
 
                 // popola la tabella
                 response.chiamate.forEach(function(chiamata){
@@ -152,14 +172,59 @@ $(document).ready(function() {
 
                 });
 
-            // Controllo se ci sono chiamate
-            if (response.chiamate.length === 0) {
-                $('#noCallsMessage').show();
-                $('#chiamateTable').hide();
-            } else {
-                $('#noCallsMessage').hide();
-                $('#chiamateTable').show();
-            }
+                // popola la lista delle competenze
+
+                let htmlContent = "";
+
+                response.total_competenze.forEach(function(competenza) {
+                    let isChecked = "";
+                    
+                    if (response.chose_competenze) {
+                        isChecked = response.chose_competenze.some(item => item.id === competenza.id) ? "checked" : "";
+                    }
+
+                    // Se usableCounter è false o la competenza è controllata, aggiungiamo alla nostra variabile htmlContent
+                    if (!usableCounter || (usableCounter && isChecked === "checked")) {
+                        if (usableCounter) {
+                            htmlContent += 
+                            `
+                            <div class="checkbox-container text-light bg-info rounded-5 px-4 pt-2">
+                                <h5>${competenza.description}</h5>
+                            </div>
+                            `;
+                        } else {
+                            htmlContent += 
+                            `
+                            <div class="checkbox-container">
+                                <input type="checkbox" ${isChecked} id="competenza[${competenza.id}]" name="competenza[${competenza.id}]" value="${competenza.id}">
+                                <label for="competenza[${competenza.id}]">${competenza.description}</label><br>
+                            </div>
+                            `;
+                        }
+                    }
+                });
+
+                // Se non abbiamo competenze selezionate e sono nella show
+                if (!response.chose_competenze && usableCounter) {
+                    htmlContent = 
+                    `
+                    <div class="checkbox-container text-light bg-dark rounded-5 px-4 pt-2">
+                        <h5>Nessuna competenza</h5>
+                    </div>
+                    `;
+                }
+
+                elencoCompetenze.html(htmlContent);
+
+
+                // Controllo se ci sono chiamate
+                if (response.chiamate.length === 0) {
+                    $('#noCallsMessage').show();
+                    $('#chiamateTable').hide();
+                } else {
+                    $('#noCallsMessage').hide();
+                    $('#chiamateTable').show();
+                }
                 
             },
             error: function(error) {
@@ -184,9 +249,11 @@ $(document).ready(function() {
         $('#buttonSave, #sex').attr('disabled', false);
         $('button[type="submit"]').show();
         $('button[id="addChiamata"]').show();
+        $('#buttonEditId').hide();
         $('#container_chiamate').show();
         $('.form-control').removeClass('border-0');
         $('#foto-container').show();
+
         
 
         // Poi, se è il caso di '.buttonShow', applica le modifiche appropriate
@@ -195,7 +262,7 @@ $(document).ready(function() {
             $('#fotoFilename').attr('type', 'hidden');
             $('#fotoFilenameLabel').hide();
             $('#buttonSave, #sex').attr('disabled', true);
-            $('#buttonEditInForm').attr('disabled', false);
+            $('#buttonEditId').show();
             $('button[type="submit"]').hide(); 
             $('button[id="addChiamata"]').hide();
             $('.form-control').addClass('border-0');

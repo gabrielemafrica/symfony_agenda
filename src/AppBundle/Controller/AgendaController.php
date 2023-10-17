@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Agenda;
 use AppBundle\Entity\Chiamate;
+use AppBundle\Entity\Setup_competenze;
+use AppBundle\Entity\AgendaCompetenze;
 use AppBundle\Form\AgendaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,43 +24,15 @@ class AgendaController extends Controller
     {
 
         $entries = $this->getDoctrine()->getRepository(Agenda::class)->findBy(['deleted' => false]);
-
-        // // form
-        // $agenda = new Agenda();
-        // $form = $this->createForm(AgendaType::class, $agenda);
-
-        // $form->handleRequest($request);
-        // if ($form->isSubmitted() && $form->isValid()) {
-        //     // gestione immagine
-        //     /** @var Symfony\Component\HttpFoundation\File\UploadedFile $fotoFile */
-        //     $fotoFile = $form['fotoFilename']->getData();
-            
-        //     if ($fotoFile) {
-        //         $originalFilename = pathinfo($fotoFile->getClientOriginalName(), PATHINFO_FILENAME);
-        //         $newFilename = $originalFilename . '-' . uniqid() . '.' . $fotoFile->guessExtension();
-
-        //         $fotoFile->move(
-        //             $this->getParameter('foto_directory'),
-        //             $newFilename
-        //         );
-
-        //         $agenda->setFotoFilename($newFilename);
-        //     }
-
-        //     // gestisco maiuscole
-        //     $agenda->setName(ucfirst(strtolower($agenda->getName())));
-        //     $agenda->setSurname(ucfirst(strtolower($agenda->getSurname())));
-
-        //     $em = $this->getDoctrine()->getManager();
-        //     $em->persist($agenda);
-        //     $em->flush();
-
-        //     return $this->redirectToRoute('homepage');
-        // }
+        //take competenze
+        $competenze = $this->getDoctrine()->getRepository(Setup_competenze::class)->findBy(['deleted' => false]);
+        //take chiamate
+        $chiamate = $this->getDoctrine()->getRepository(Chiamate::class)->findAll();
 
         return $this->render('@AppBundle/Agenda/index.html.twig', [
-            // 'form' => $form->createView(),
             'entries' => $entries,
+            'competenze' => $competenze,
+            'chiamate' => $chiamate
         ]);
     }
 
@@ -67,14 +41,26 @@ class AgendaController extends Controller
      */
     public function editCallAction(Request $request)
     {
-        $id = $request->query->get('id'); 
-
         $em = $this->getDoctrine()->getManager();
+        $id = $request->query->get('id'); 
+        if (!$id) {
+            // prendo tutte le competenze
+            $total_competenze =  $em->getRepository(Setup_competenze::class)->findBy(['deleted' => false]);
+            $totalCompetenzeArray = [];
+            foreach ($total_competenze as $competenza) {
+                $totalCompetenzeArray[] = [
+                    'id' => $competenza->getId(),
+                    'description' => $competenza->getDescription()
+                ];
+            };
+            return new JsonResponse($totalCompetenzeArray);
+        }
+       
         $entry = $em->getRepository(Agenda::class)->find($id);
         
         // prendo le chiamte
         $chiamate = $entry->getChiamate();
-
+        
         $chiamateArray = [];
         foreach ($chiamate as $chiamata) {
             $chiamateArray[] = [
@@ -85,6 +71,31 @@ class AgendaController extends Controller
                 'note' => $chiamata->getNote()
             ];
         }
+        // prendo tutte le competenze
+        $total_competenze =  $em->getRepository(Setup_competenze::class)->findBy(['deleted' => false]);
+        $totalCompetenzeArray = [];
+        foreach ($total_competenze as $competenza) {
+            $totalCompetenzeArray[] = [
+                'id' => $competenza->getId(),
+                'description' => $competenza->getDescription()
+            ];
+        }
+
+        //prendo le competenze associate
+        $chose_competenze =  $em->getRepository(AgendaCompetenze::class)->findBy(['agenda_id' => $id]);
+        $choseCompetenzeArray = [];
+        if ($chose_competenze) {
+            
+            foreach ($chose_competenze as $competenza) {
+                
+                $choseCompetenzeArray[] = [
+                    'id' => $competenza->getCompetenzaId()
+                ];
+            }
+        }else {
+            $choseCompetenzeArray = null;
+        }
+
 
         if (!$entry) {
             return new JsonResponse(['status' => 'error', 'message' => 'Contatto non trovato']);
@@ -105,6 +116,8 @@ class AgendaController extends Controller
             'sex'=> $entry->getSex(),
             'fotoFilename' => $imageUrl,
             'chiamate' => $chiamateArray,
+            'total_competenze' => $totalCompetenzeArray,
+            'chose_competenze' => $choseCompetenzeArray,
         ]);
     }
 
@@ -158,6 +171,34 @@ class AgendaController extends Controller
             $agenda->setFotoFilename($newFilename);
         }
 
+        // Di seguito, la logica per la gestione delle competenze
+        $competenzeData = $request->request->get('competenza');
+         
+        // rimuovi tutte le competenze associte
+        if ($agenda->getId()) {
+            foreach ($agenda->getCompetenze() as $competenzaAssociata) {
+                $agenda->removeCompetenze($competenzaAssociata);
+                $em->remove($competenzaAssociata);
+            }
+        }
+        if ($competenzeData && is_array($competenzeData)) {
+            $competenzeRepo = $em->getRepository(Setup_competenze::class);
+
+            foreach ($competenzeData as $competenzaId) {
+                $competenza = $competenzeRepo->find($competenzaId);
+
+                if ($competenza) {
+                    $agendaCompetenza = new AgendaCompetenze();
+                    $agendaCompetenza->setAgenda($agenda);
+                    $agendaCompetenza->setCompetenza($competenza);
+                    
+                    $agenda->addCompetenze($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Agenda
+        
+                    $em->persist($agendaCompetenza); ;
+                }
+            }
+        }
+
         // Se è una nuova agenda, salvala e termina la funzione
         if (!$agenda->getId()) {
             $em->persist($agenda);
@@ -195,6 +236,7 @@ class AgendaController extends Controller
                 $em->persist($chiamata);
             }
         }
+
 
         // salvataggio delle entità
         $em->persist($agenda);
