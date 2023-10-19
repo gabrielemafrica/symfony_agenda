@@ -27,7 +27,9 @@
 				</button>
 			</div> -->
 
-			{% if entries|length > 0 %}
+			{% if entries is empty %}
+				<h5>La tua agenda è vuota.</h5>
+			{% else %}
 				<div class='container'>
 					<table class="table table-hover text-center">
 						<thead>
@@ -83,8 +85,8 @@
 						</tbody>
 					</table>
 				</div>
-			{% else %}
-				<h3>La tua agenda è vuota.</h3>
+			
+				
 			{% endif %}
 		</div>
 	</div>
@@ -105,6 +107,7 @@
 					<tr>
 						<th>Id</th>
 						<th>Descrizione</th>
+						<th>Azioni</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -131,14 +134,18 @@
 										<div class="accordion-body">
 											<h5>Persone con {{ competenza.description }}</h5>
 											<div class="container d-flex justify-content-center gap-2 flex-wrap">
-												{% for agenda in competenza.getAgenda() %}
-												<div>
-													<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ agenda.getAgenda().getId() }}">
-														{{ agenda.getAgenda().getName() }}
-														{{ agenda.getAgenda().getSurname() }}
-													</button>
-												</div>
-												{% endfor %}
+												{% if competenza.getAgenda()|length > 0 %}
+													{% for agenda in competenza.getAgenda() %}
+													<div>
+														<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ agenda.getAgenda().getId() }}">
+															{{ agenda.getAgenda().getName() }}
+															{{ agenda.getAgenda().getSurname() }}
+														</button>
+													</div>
+													{% endfor %}
+												{% else %}
+													<h5>NESSUNA<h5>
+												{% endif %}
 											</div>
 										</div>
 									</div>
@@ -146,6 +153,16 @@
 								<!-- End of Accordion item -->
 							</div>
 							<!-- End of Accordion wrapper -->
+						</td>
+						<td class="d-flex justify-content-center gap-1">
+							<div>
+								<button type="button" class="buttonEditCompetenza btn btn-warning" data-toggle="modal" data-id="{{ competenza.id }}">
+									Edit
+								</button>
+							</div>
+							<div>
+								<a class="buttonDeleteCompetenza btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questa competenza?');" data-id="{{ competenza.id }}">Delete</a>
+							</div>
 						</td>
 					</tr>
 					{% endfor %}

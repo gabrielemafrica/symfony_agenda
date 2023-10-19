@@ -89,7 +89,7 @@ class AgendaController extends Controller
             foreach ($chose_competenze as $competenza) {
                 
                 $choseCompetenzeArray[] = [
-                    'id' => $competenza->getCompetenzaId()
+                    'id' => $competenza->getCompetenza()->getId()
                 ];
             }
         }else {
@@ -126,7 +126,6 @@ class AgendaController extends Controller
      */
     public function saveAction(Request $request)
     {
-        // funzioni
         function capitalizeWords($string) {
             return implode(' ', array_map('ucfirst', explode(' ', strtolower($string))));
         }
@@ -171,12 +170,13 @@ class AgendaController extends Controller
             $agenda->setFotoFilename($newFilename);
         }
 
-        // Di seguito, la logica per la gestione delle competenze
+        // Gestione delle competenze
         $competenzeData = $request->request->get('competenza');
          
         // rimuovi tutte le competenze associte
         if ($agenda->getId()) {
             foreach ($agenda->getCompetenze() as $competenzaAssociata) {
+                // non usare
                 $agenda->removeCompetenze($competenzaAssociata);
                 $em->remove($competenzaAssociata);
             }
@@ -192,6 +192,7 @@ class AgendaController extends Controller
                     $agendaCompetenza->setAgenda($agenda);
                     $agendaCompetenza->setCompetenza($competenza);
                     
+                    // non usare
                     $agenda->addCompetenze($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Agenda
         
                     $em->persist($agendaCompetenza); ;
@@ -208,9 +209,11 @@ class AgendaController extends Controller
         }
 
         // Di seguito, la logica per la gestione delle chiamate, che viene applicata solo se l'agenda esiste già.
+
         $chiamateData = $request->request->get('chiamate');
 
         if ($chiamateData && is_array($chiamateData)) {
+
             $chiamataRepo = $em->getRepository(Chiamate::class);
 
             foreach ($chiamateData as $chiamataData) {
@@ -248,40 +251,6 @@ class AgendaController extends Controller
     }
 
     /**
-     * @Route("/save-chiamata", name="save_chiamata", methods={"POST"})
-     */
-    public function saveChiamataAction(Request $request)
-    {
-        var_dump($request->request->all());
-
-        //get id
-        $id = $request->request->get('id');
-        $id_contatto = $request->request->get('id_contatto');
-        $date = $request->request->get('date');
-        $time = $request->request->get('time');
-        $note = $request->request->get('note');
-
-        $em = $this->getDoctrine()->getManager();
-        $chiamata = $em->getRepository(Chiamate::class)->find($id);
-        
-        if (!$chiamata) {
-            $agenda = $em->getRepository(Agenda::class)->find($id_contatto);
-            $chiamata = new Chiamate();
-            $chiamata->setAgenda($agenda);
-        }
-    
-        $chiamata->setDate($date);
-        $chiamata->setTime($time);
-        $chiamata->setNote($note);
-          
-        $em->persist($chiamata);
-        $em->flush();
-
-        // return $this->redirectToRoute('homepage');
-        return new JsonResponse(['status' => 'success']);
-    }
-
-    /**
      * @Route("/delete", name="delete_agenda")
      */
     public function deleteAction(Request $request)
@@ -299,5 +268,160 @@ class AgendaController extends Controller
         }
 
         return $this->redirectToRoute('homepage');
+    }
+
+    /**
+     * @Route("/deleteChiamata", name="delete_chiamata")
+     */
+    public function deleteChiamataAction(Request $request)
+    {
+        $id = $request->get('id');
+
+        error_log("ID: " . $id);
+
+        $em = $this->getDoctrine()->getManager();
+        $chiamata = $em->getRepository(Chiamate::class)->find($id);
+
+        // rimuovi la chiamata
+        $em->remove($chiamata);
+        $em->flush(); // esegui le modifiche sul database
+
+        return new JsonResponse(['status' => 'success', 'message' => 'Chiamata eliminata con successo!']);
+    }
+
+
+
+    //*! competenze
+
+    /**
+     * @Route("/saveCompetenza", name="save_competenza", methods={"POST"})
+     */
+    public function saveCompetenzaAction(Request $request)
+    {
+
+        // recupero dei dati dal request
+        $id = $request->request->get('idCompetenza');
+        $description = $request->request->get('nameCompetenza');
+
+        $em = $this->getDoctrine()->getManager();
+        $competenza = $em->getRepository(Setup_competenze::class)->find($id);
+        // $competenzaAgenda = $em->getRepository(AgendaCompetenze::class)->findBy(['competenza_id' => $id]);
+
+        if (!$competenza) {
+            $competenza = new Setup_competenze();
+        }
+
+        // settaggio delle proprietà
+        $competenza->setDescription($description);
+
+        // Gestione delle agende
+        $agendaData = $request->request->get('agenda');
+    
+        // rimuovi tutte le competenze associte
+        if ($competenza->getId()) {
+            foreach ($competenza->getAgenda() as $agendaAssociata) {
+                $competenza->removeAgenda($agendaAssociata);
+                $em->remove($agendaAssociata);
+            }
+        }
+        if ($agendaData && is_array($agendaData)) {
+            $agendaRepo = $em->getRepository(Agenda::class);
+
+            foreach ($agendaData as $agendaId) {
+                $agenda = $agendaRepo->find($agendaId);
+
+                if ($agenda) {
+                    $agendaCompetenza = new AgendaCompetenze();
+                    $agendaCompetenza->setAgenda($agenda);
+                    $agendaCompetenza->setCompetenza($competenza);
+                    
+                    $competenza->addAgenda($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Competenza
+        
+                    $em->persist($agendaCompetenza); ;
+                }
+            }
+        }
+
+
+        $em->persist($competenza);
+        $em->flush();
+
+        return new JsonResponse(['status' => 'success']);
+    }
+        /**
+     * @Route("/editCompetenza", name="edit_competenza")
+     */
+    public function editCompetenzaAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $id = $request->query->get('id');
+
+        // prendo tutte le voci in agenda
+
+        $total_agenda =  $em->getRepository(Agenda::class)->findBy(['deleted' => false]);
+        $totalAgendaArray = [];
+        foreach ($total_agenda as $agenda) {
+            $totalAgendaArray[] = [
+                'id' => $agenda->getId(),
+                'name' => $agenda->getName(),
+                'surname' => $agenda->getSurname()
+            ];
+        };
+        if (!$id) {
+            return new JsonResponse($totalAgendaArray);
+        }
+       
+        $competenza = $em->getRepository(Setup_competenze::class)->find($id);
+
+        //prendo le agende associate
+        $agende_associate =  $em->getRepository(AgendaCompetenze::class)->findBy(['competenza_id' => $id]);
+        $agendeAssociateArray = [];
+        if ($agende_associate) {
+            
+            foreach ($agende_associate as $agenda) {
+                
+                $agendeAssociateArray[] = [
+                    'id' => $agenda->getAgendaId()
+                ];
+            }
+        }else {
+            $agendeAssociateArray = null;
+        }
+
+
+        if (!$competenza) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Competenza non trovata']);
+        }
+
+        return new JsonResponse([
+            'id' => $competenza->getId(),
+            'description' => $competenza->getDescription(),
+            'total_agenda' => $totalAgendaArray,
+            'agende_associate' => $agendeAssociateArray,
+        ]);
+    }
+
+        /**
+     * @Route("/deleteCompetenza", name="delete_competenza")
+     */
+    public function deleteCompetenzaAction(Request $request)
+    {
+        $id = $request->query->get('id');
+        error_log("ID: " . $id);
+        $em = $this->getDoctrine()->getManager();
+        $competenza = $em->getRepository(Setup_competenze::class)->find($id);
+        
+
+        if ($competenza) {
+            $agendeAssociate = $em->getRepository(AgendaCompetenze::class)->findBy(['competenza_id' => $id]);
+            if ($agendeAssociate) {
+                $errore = 'La competenza non può essere eliminata, è assegnata a delle persone. Devi prima disassociarla!';
+                return new JsonResponse(['error' => $errore]);
+            }
+                $competenza->setDeleted(true);
+                $em->persist($competenza);
+                $em->flush();
+                return new JsonResponse(['status' => 'success']);
+        }
     }
 }

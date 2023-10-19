@@ -21,7 +21,7 @@ $(document).ready(function() {
         $('#fotoFilename').attr('type', 'file');
         $('#fotoFilename').attr('disabled', false);
         $('#buttonSave, #sex').attr('disabled', false);
-        // $('#buttonEditInForm').attr('disabled', true);
+        $('#buttonEditId').hide();
         $('button[type="submit"]').show();
         $('#fotoFilenameLabel').show();
         // Resetta l'immagine
@@ -122,7 +122,7 @@ $(document).ready(function() {
 
         
  
-       //shearch in database
+       //search in database
         $.ajax({
             type: "GET",
             url: '/editCall',
@@ -149,11 +149,13 @@ $(document).ready(function() {
                 // popola la tabella
                 response.chiamate.forEach(function(chiamata){
                     currentIndex ++;
-                    let buttonRemoveChiamata = '<button type="button" class="btn btn-danger removeChiamata">x</button>';
-                    let buttonEditChiamata = '<button type="button" class="btn btn-warning editChiamata">M</button>';
+                    let fraseRemove = 'Sei sicuro di voler eliminare questa chiamata?';
+                    let buttonRemoveChiamata = `<button type="button" class="btn btn-danger removeChiamata" onclick="return confirm('${fraseRemove}');" data-id="${chiamata.id}">x</button>`;
+                    let buttonEditChiamata = `<button type="button" class="btn btn-warning editChiamata">M</button>`;
+                    
                     if (usableCounter) {
-                        buttonRemoveChiamata = '<button type="button" class="btn btn-danger removeChiamata d-none">x</button>';
-                        buttonEditChiamata = '<button type="button" class="btn btn-warning editChiamata d-none">x</button>';
+                        buttonRemoveChiamata = `<button type="button" class="btn btn-danger removeChiamata d-none" onclick="return confirm('${fraseRemove}');" data-id="${chiamata.id}">x</button>`;
+                        buttonEditChiamata = `<button type="button" class="btn btn-warning editChiamata d-none"">x</button>`;
                     }
                     let row =
                         `<tr>
@@ -254,6 +256,14 @@ $(document).ready(function() {
         $('.form-control').removeClass('border-0');
         $('#foto-container').show();
 
+
+
+
+        
+
+
+
+
         
 
         // Poi, se è il caso di '.buttonShow', applica le modifiche appropriate
@@ -263,7 +273,7 @@ $(document).ready(function() {
             $('#fotoFilenameLabel').hide();
             $('#buttonSave, #sex').attr('disabled', true);
             $('#buttonEditId').show();
-            $('button[type="submit"]').hide(); 
+            $('button[type="submit"]').hide();
             $('button[id="addChiamata"]').hide();
             $('.form-control').addClass('border-0');
         }
@@ -273,7 +283,7 @@ $(document).ready(function() {
 
     });
 
-    // aggiongo chiamata
+    // aggiungo chiamata
 
     $('#addChiamata').on('click', function() {
 
@@ -301,7 +311,27 @@ $(document).ready(function() {
     
     // Per rimuovere una riga
     $(document).on('click', '.removeChiamata', function() {
+        // prelevo i miei dati
+        const id = $(this).data("id");
+        console.log(id);
+        if (id) {
+            
+            $.post('/deleteChiamata', {id: id}, function(risposta) {
+                console.log(risposta);
+                alert(risposta.message);
+            }).fail(function() {
+                alert('Errore nell\'invio dei dati!');
+            });
+        }
+
         $(this).closest('tr').remove();
+            //Verifica se ci sono altre righe nella tabella
+        if ($("table#chiamateTable tbody tr").length == 0)  {
+            $('#noCallsMessage').show();
+            $("table#chiamateTable").hide();
+        }
+
     });
+
     
 });
