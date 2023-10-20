@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Asset\Package;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 
+// require_once __DIR__ . '/../Utilities/utilities.php';
+
 
 class AgendaController extends Controller
 {
@@ -126,9 +128,6 @@ class AgendaController extends Controller
      */
     public function saveAction(Request $request)
     {
-        function capitalizeWords($string) {
-            return implode(' ', array_map('ucfirst', explode(' ', strtolower($string))));
-        }
 
         // recupero dei dati dal request
         $id = $request->request->get('id');
@@ -301,7 +300,7 @@ class AgendaController extends Controller
 
         // recupero dei dati dal request
         $id = $request->request->get('idCompetenza');
-        $description = $request->request->get('nameCompetenza');
+        $description = capitalizeWords($request->request->get('nameCompetenza'));
 
         $em = $this->getDoctrine()->getManager();
         $competenza = $em->getRepository(Setup_competenze::class)->find($id);

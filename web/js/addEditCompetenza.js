@@ -1,168 +1,141 @@
-
 $(document).ready(function() {
- 
-    // apro modale
-    $('#buttonAddCompetenza').on('click', function(){
-        
-        $("#add_edit_competenze").modal('show');
+
+    // Seleziona gli elementi solo una volta per evitare ripetute query al DOM
+    const $modal = $("#add_edit_competenze");
+    const $competenzaForm = $('#competenza_form');
+    const $assegnaCompetenze = $('#container-assegna');
+    const $submitButton = $('button[type="submit"]');
+    const $formControls = $('.form-control');
+
+    // Funzione per resettare il form e svuotare il contenitore delle competenze
+    function resetFormAndContainer() {
         // Resetta il form
-        $('#competenza_form')[0].reset();
-        $('.form-control').removeClass('border-0');
-        $('button[type="submit"]').show();
+        $competenzaForm[0].reset();
+        // Rimuove la classe 'border-0' dai controlli del form
+        $formControls.removeClass('border-0');
+        // Svuota il contenitore delle competenze
+        $assegnaCompetenze.empty();
+        // Mostra il pulsante di invio
+        $submitButton.show();
+    }
 
-        let assegnaCompetenze = $('#container-assegna');
-        assegnaCompetenze.empty();
-
-        // popolo agenda
-
-        const id = null;
-        $.post('/editCompetenza', id, function(risposta) {
-            console.log(risposta);
-        
-            // Inizializza un contenitore per i checkbox
-            let checkboxes = '<div class="checkbox-list" style="max-height: 150px; overflow-y: scroll;">';
-        
-            risposta.forEach(function(agenda){
-                checkboxes += `
+    // Funzione per costruire una lista di checkbox basata sui dati forniti
+    function buildCheckboxList(data, associatedAgendasIds = []) {
+        // Inizializza un contenitore per i checkbox con uno scroll verticale
+        let checkboxes = '<div class="checkbox-list" style="max-height: 150px; overflow-y: scroll;">';
+        data.forEach(function(agenda) {
+            // Verifica se l'agenda corrente è associata
+            let isChecked = associatedAgendasIds.includes(agenda.id) ? 'checked' : '';
+            checkboxes += `
                 <div>
-                    <input type="checkbox" id="agenda[${agenda.id}]" name="agenda[${agenda.id}]" value="${agenda.id}">
+                    <input type="checkbox" id="agenda[${agenda.id}]" name="agenda[${agenda.id}]" value="${agenda.id}" ${isChecked}>
                     <label for="agenda[${agenda.id}]">${agenda.name} ${agenda.surname}</label>
                 </div>
-                `;
-            });
-        
-            // Chiudi il contenitore dei checkbox
-            checkboxes += '</div>';
-        
-            assegnaCompetenze.append(checkboxes);
-        
+            `;
+        });
+        // Chiude il contenitore dei checkbox
+        checkboxes += '</div>';
+        // Aggiunge la lista di checkbox al contenitore delle competenze
+        $assegnaCompetenze.append(checkboxes);
+    }
+
+    // Evento per aprire la modale e mostrare le competenze
+    $('#buttonAddCompetenza').on('click', function() {
+        // Mostra la modale
+        $modal.modal('show');
+        // Resetta il form e il contenitore
+        resetFormAndContainer();
+        // Effettua una chiamata AJAX per ottenere le competenze
+        $.post('/editCompetenza', null, function(risposta) {
+            // Costruisce la lista di checkbox con le competenze ricevute
+            buildCheckboxList(risposta);
         }).fail(function() {
+            // Gestisce l'errore nel caso la chiamata AJAX non vada a buon fine
             alert('Errore nell\'invio dei dati!');
         });
-        
     });
 
-    // chiudo modale
-    $('#buttonCloseCompetenze').on('click', function(){
-       
-        $("#add_edit_competenze").modal('hide');
+    // Evento per chiudere la modale
+    $('#buttonCloseCompetenze').on('click', function() {
+        $modal.modal('hide');
     });
 
-    // salvo i dati
-    $('#competenza_form').submit(function(event) {
-        
+    // Evento per inviare il form con le competenze
+    $competenzaForm.submit(function(event) {
+        // Previene il comportamento di default del form (cioè il suo invio normale)
         event.preventDefault();
-
-        var datiForm = new FormData(this);
-        console.log('i miei dati competenze: ', datiForm);
-        
-        // chiamata AJAX
+        // Crea un oggetto FormData con i dati del form
+        let datiForm = new FormData(this);
+        // Effettua una chiamata AJAX per salvare i dati
         $.ajax({
             url: '/saveCompetenza',
             type: 'POST',
             data: datiForm,
-            contentType: false, // Il tipo di contenuto deve essere impostato su false per forzare jQuery a non processare i dati inviati
-            processData: false, // Imposta processData su false per impedire a jQuery di convertire i dati in una stringa di query
+            contentType: false,
+            processData: false,
             success: function(risposta) {
-                console.log(risposta);
+                // Se i dati sono stati salvati correttamente, reindirizza alla homepage
                 if (risposta.status && risposta.status === 'success') {
                     window.location.href = '/';
                 } else {
+                    // Altrimenti, mostra un messaggio di errore e stampa la risposta
                     alert('Si è verificato un errore durante il salvataggio dei dati.');
-                    console.log('ecco la risposta');
-                    console.log(risposta);
                 }
             },
             error: function() {
+                // Gestisce l'errore nel caso la chiamata AJAX non vada a buon fine
                 alert('Errore nell\'invio del form!');
             }
         });
-
     });
 
-    // mostro dati da modificare
-    $('.buttonEditCompetenza').on('click', function(){
-
-        // prelevo i miei dati
+    // Evento per mostrare i dettagli di una competenza e modificarla
+    $('.buttonEditCompetenza').on('click', function() {
         const id = $(this).data("id");
-        
-        // Resetta il form
-        $('#competenza_form')[0].reset();
-        $('.form-control').removeClass('border-0');
-        let assegnaCompetenze = $('#container-assegna');
-        assegnaCompetenze.empty();
-
-       //shearch in database
+        resetFormAndContainer();
+        // Effettua una chiamata AJAX per ottenere i dettagli della competenza
         $.ajax({
             type: "GET",
             url: '/editCompetenza',
-            data: {id: id},
+            data: { id: id },
             success: function(response) {
-                console.log('ecco i miei dati: ', response);
-
+                // Imposta i valori ricevuti nei campi appropriati del form
                 $('#idCompetenza').val(response.id);
                 $('#nameCompetenza').val(response.description);
 
-                // pendo ID da agende_associate per facilitare la verifica
-                let associatedAgendasIds = [];
-
-                if (response.agende_associate && response.agende_associate.length > 0) {
-                    associatedAgendasIds = response.agende_associate.map(agenda => agenda.id);
-                }
-
-                // Inizializza un contenitore per i checkbox
-                let checkboxes = '<div class="checkbox-list" style="max-height: 150px; overflow-y: scroll;">';
-            
-                response.total_agenda.forEach(function(agenda){
-
-                    // Controlla se l'agenda è associata
-                    let isChecked = associatedAgendasIds.includes(agenda.id) ? 'checked' : '';
-
-                    checkboxes += `
-                    <div>
-                        <input type="checkbox" id="agenda[${agenda.id}]" name="agenda[${agenda.id}]" value="${agenda.id}" ${isChecked}>
-                        <label for="agenda[${agenda.id}]">${agenda.name} ${agenda.surname}</label>
-                    </div>
-                    `;
-                });
-                checkboxes += '</div>';
-                assegnaCompetenze.append(checkboxes);
-
+                let associatedAgendasIds = response.agende_associate ? response.agende_associate.map(agenda => agenda.id) : [];
+                // Costruisce la lista di checkbox con le agende associate
+                buildCheckboxList(response.total_agenda, associatedAgendasIds);
             },
             error: function() {
+                // Gestisce l'errore nel caso la chiamata AJAX non vada a buon fine
                 alert('Errore nel caricamento dei dati!');
             }
-
-
         });
-        $('button[type="submit"]').show();
-        // Mostra la modale
-        $("#add_edit_competenze").modal('show');
-
+        $modal.modal('show');
     });
 
-    // elimina competenza
-    $('.buttonDeleteCompetenza').on('click', function(){
-        // prelevo i miei dati
+    // Evento per eliminare una competenza
+    $('.buttonDeleteCompetenza').on('click', function() {
         const id = $(this).data("id");
-    
-            $.ajax({
-                url: '/deleteCompetenza',
-                type: 'GET',
-                data: { id: id },
-                success: function(data) {
-                    console.log(data);
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        window.location.href = '/';
-                    }
-                },
-                error: function() {
-                    alert('Errore durante l\'eliminazione della competenza.');
+        // Effettua una chiamata AJAX per eliminare la competenza
+        $.ajax({
+            url: '/deleteCompetenza',
+            type: 'GET',
+            data: { id: id },
+            success: function(data) {
+                // Se l'eliminazione ha avuto successo, reindirizza alla homepage
+                if (!data.error) {
+                    window.location.href = '/';
+                } else {
+                    // Altrimenti, mostra un messaggio di errore
+                    alert(data.error);
                 }
-            });
-    
-    })
-    
+            },
+            error: function() {
+                // Gestisce l'errore nel caso la chiamata AJAX non vada a buon fine
+                alert('Errore durante l\'eliminazione della competenza.');
+            }
+        });
+    });
 });

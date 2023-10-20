@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "@AppBundle/base.html.twig" %}
 
 {% block title %}AppBundle:Agenda:index
 {% endblock %}
@@ -22,10 +22,10 @@
 			</div>
 
 			<!-- <div>
-													<button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-														Aggiungi contatto con entity-form
-													</button>
-												</div> -->
+																									<button type="button" id="buttonAddWithEntityForm" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+																										Aggiungi contatto con entity-form
+																									</button>
+																								</div> -->
 
 			{% if entries is empty %}
 				<h5>La tua agenda è vuota.</h5>
@@ -77,7 +77,7 @@
 											<a href="{{ path('delete_agenda', {'id': entry.id}) }}" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo contatto?');">Delete</a>
 										</div>
 										<!-- <form action="{{ path('delete_agenda') }}" method="post"
-																																																																																																		</form> -->
+																																																																																																																																										</form> -->
 
 									</td>
 								</tr>
@@ -135,12 +135,14 @@
 												<div class="container d-flex justify-content-center gap-2 flex-wrap">
 													{% if competenza.getAgendaCompetenze()|length > 0 %}
 														{% for agenda in competenza.getAgendaCompetenze() %}
-															<div>
-																<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ agenda.getAgenda().getId() }}">
-																	{{ agenda.getAgenda().getName() }}
-																	{{ agenda.getAgenda().getSurname() }}
-																</button>
-															</div>
+															{% if agenda.getAgenda().getDeleted() == 0 %}
+																<div>
+																	<button type="button" class="buttonShow btn btn-info" data-toggle="modal" data-id="{{ agenda.getAgenda().getId() }}">
+																		{{ agenda.getAgenda().getName() }}
+																		{{ agenda.getAgenda().getSurname() }}
+																	</button>
+																</div>
+															{% endif %}
 														{% endfor %}
 													{% else %}
 														<h5>NESSUNA<h5>
