@@ -36,9 +36,9 @@ class Setup_competenze
     private $deleted = false;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\AgendaCompetenze", mappedBy="setup_competenze")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\AgendaCompetenze", mappedBy="competenza")
      */
-    private $agenda;
+    private $agendaCompetenze;
 
 
     /**
@@ -98,4 +98,14 @@ class Setup_competenze
     {
         return $this->deleted;
     }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->agendaCompetenze = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+ 
 }

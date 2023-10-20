@@ -80,7 +80,7 @@ class Agenda
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\AgendaCompetenze", mappedBy="agenda")
      */
-    private $agendaCompetenze;
+    private $competenze;
     
     
 
@@ -302,43 +302,41 @@ class Agenda
      */
     public function __construct()
     {
-        $this->chiamate = new ArrayCollection();
-        $this->agendaCompetenze = new ArrayCollection();
+        $this->chiamate = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
-
     /**
-     * Add agendaCompetenze
+     * Add competenze
      *
-     * @param \AppBundle\Entity\AgendaCompetenze $agendaCompetenze
+     * @param \AppBundle\Entity\AgendaCompetenze $competenze
      *
      * @return Agenda
      */
-    public function addAgendaCompetenze(\AppBundle\Entity\AgendaCompetenze $agendaCompetenze)
+    public function addCompetenze(\AppBundle\Entity\AgendaCompetenze $competenze)
     {
-        $this->agendaCompetenze[] = $agendaCompetenze;
+        $this->competenze[] = $competenze;
 
         return $this;
     }
 
     /**
-     * Remove agendaCompetenze
+     * Remove competenze
      *
-     * @param \AppBundle\Entity\AgendaCompetenze $agendaCompetenze
+     * @param \AppBundle\Entity\AgendaCompetenze $competenze
      */
-    public function removeAgendaCompetenze(\AppBundle\Entity\AgendaCompetenze $agendaCompetenze)
+    public function removeCompetenze(\AppBundle\Entity\AgendaCompetenze $competenze)
     {
-        $this->agendaCompetenze->removeElement($agendaCompetenze);
+        $this->competenze->removeElement($competenze);
     }
 
     /**
-     * Get agendaCompetenze
+     * Get competenze
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getAgendaCompetenze()
+    public function getCompetenze()
     {
-        return $this->agendaCompetenze;
+        return $this->competenze;
     }
 }

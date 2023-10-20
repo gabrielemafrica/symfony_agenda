@@ -82,7 +82,7 @@ class AgendaController extends Controller
         }
 
         //prendo le competenze associate
-        $chose_competenze =  $em->getRepository(AgendaCompetenze::class)->findBy(['agenda_id' => $id]);
+        $chose_competenze =  $em->getRepository(AgendaCompetenze::class)->findBy(['agenda' => $id]);
         $choseCompetenzeArray = [];
         if ($chose_competenze) {
             
@@ -175,9 +175,9 @@ class AgendaController extends Controller
          
         // rimuovi tutte le competenze associte
         if ($agenda->getId()) {
-            foreach ($agenda->getCompetenze() as $competenzaAssociata) {
+            foreach ($agenda->getAgendaCompetenze() as $competenzaAssociata) {
                 // non usare
-                $agenda->removeCompetenze($competenzaAssociata);
+                // $agenda->removeAgendaCompetenze($competenzaAssociata);
                 $em->remove($competenzaAssociata);
             }
         }
@@ -193,7 +193,7 @@ class AgendaController extends Controller
                     $agendaCompetenza->setCompetenza($competenza);
                     
                     // non usare
-                    $agenda->addCompetenze($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Agenda
+                    // $agenda->addAgendaCompetenze($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Agenda
         
                     $em->persist($agendaCompetenza); ;
                 }
@@ -319,8 +319,8 @@ class AgendaController extends Controller
     
         // rimuovi tutte le competenze associte
         if ($competenza->getId()) {
-            foreach ($competenza->getAgenda() as $agendaAssociata) {
-                $competenza->removeAgenda($agendaAssociata);
+            foreach ($competenza->getAgendaCompetenze() as $agendaAssociata) {
+                // $competenza->removeAgendaCompetenze($agendaAssociata);
                 $em->remove($agendaAssociata);
             }
         }
@@ -335,7 +335,7 @@ class AgendaController extends Controller
                     $agendaCompetenza->setAgenda($agenda);
                     $agendaCompetenza->setCompetenza($competenza);
                     
-                    $competenza->addAgenda($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Competenza
+                    $competenza->addAgendaCompetenze($agendaCompetenza); // associa l'entità AgendaCompetenze all'entità Competenza
         
                     $em->persist($agendaCompetenza); ;
                 }
@@ -374,14 +374,14 @@ class AgendaController extends Controller
         $competenza = $em->getRepository(Setup_competenze::class)->find($id);
 
         //prendo le agende associate
-        $agende_associate =  $em->getRepository(AgendaCompetenze::class)->findBy(['competenza_id' => $id]);
+        $agende_associate =  $em->getRepository(AgendaCompetenze::class)->findBy(['competenza' => $id]);
         $agendeAssociateArray = [];
         if ($agende_associate) {
             
             foreach ($agende_associate as $agenda) {
                 
                 $agendeAssociateArray[] = [
-                    'id' => $agenda->getAgendaId()
+                    'id' => $agenda->getAgenda()->getId()
                 ];
             }
         }else {

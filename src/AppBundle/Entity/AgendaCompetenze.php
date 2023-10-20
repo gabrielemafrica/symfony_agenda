@@ -21,12 +21,6 @@ class AgendaCompetenze
      */
     private $id;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="agenda_id", type="integer")
-     */
-    private $agenda_id;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Agenda", inversedBy="agendaCompetenze")
@@ -34,12 +28,6 @@ class AgendaCompetenze
      */
     private $agenda;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="competenza_id", type="integer")
-     */
-    private $competenza_id;
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Setup_competenze", inversedBy="agendaCompetenze")
@@ -57,54 +45,6 @@ class AgendaCompetenze
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set agendaId
-     *
-     * @param integer $agendaId
-     *
-     * @return AgendaCompetenze
-     */
-    public function setAgendaId($agendaId)
-    {
-        $this->agenda_id = $agendaId;
-
-        return $this;
-    }
-
-    /**
-     * Get agendaId
-     *
-     * @return integer
-     */
-    public function getAgendaId()
-    {
-        return $this->agenda_id;
-    }
-
-    /**
-     * Set competenzaId
-     *
-     * @param integer $competenzaId
-     *
-     * @return AgendaCompetenze
-     */
-    public function setCompetenzaId($competenzaId)
-    {
-        $this->competenza_id = $competenzaId;
-
-        return $this;
-    }
-
-    /**
-     * Get competenzaId
-     *
-     * @return integer
-     */
-    public function getCompetenzaId()
-    {
-        return $this->competenza_id;
     }
 
     /**
