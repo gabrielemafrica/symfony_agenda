@@ -28,6 +28,9 @@ framework:
     fragments: ~
     http_method_override: true
     assets: ~
+    # assets:
+    #     base_urls:
+    #         - '%kernel.project_dir%/src'
     php_errors:
         log: true
 
